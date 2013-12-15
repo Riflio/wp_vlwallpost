@@ -7,6 +7,7 @@ Version: 0.1
 Author: PavelK
 Author URI: http://pavelk.ru
 */
+require_once('php-console/src/PhpConsole/__autoload.php');
 
 require_once('vkapi.php');
 require_once('listtablegroups.php');
@@ -21,10 +22,13 @@ class VKWallPost {
 		
 		include 'setup.php';
 		$setup=new SetupVKWP(__FILE__);
+
+		$connector = PhpConsole\Connector::getInstance();
+		PhpConsole\Helper::register();
 		
-		require_once('FirePHPCore/FirePHP.class.php');
-		$this->firephp = FirePHP::getInstance(true);
-					
+		PC::debug($setup, 'tag');
+		PC::tag($setup);
+		
 		add_action('init', array($this, 'init'), 1);
 		add_action('admin_menu', array(&$this, 'admin_menu'));
 		add_action('wp_ajax_exportaction', array(&$this, 'ajax_exportaction'));
@@ -206,8 +210,7 @@ class VKWallPost {
 		$albums=VkApi::invoke('photos.getAlbums', array(
 				'oid' => '-23914086'
 		));	
-		$this->firephp->log("DDDD");
-		$this->firephp->log($albums);
+		
 		return $albums;
 	}
 
