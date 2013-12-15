@@ -18,8 +18,7 @@ class Vkapi {
 		$content = file_get_contents('https://api.vk.com/method/'.$name.'?'.http_build_query($params));
 		$result  = json_decode($content); 
 		
-		if (Vkapi::isError($result)) return false;
-		return $result->response;
+		return Vkapi::isError($result);
 	}
  
 	public static function auth (array $scopes)	{
@@ -64,8 +63,10 @@ class Vkapi {
 				});			 
 			</script>';	
 			return $res->error->error_code;
+		} else {
+			return $result->response;
 		}			
-
+		
 		return false;
 	}
 	
