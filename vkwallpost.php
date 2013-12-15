@@ -220,7 +220,7 @@ class VKWallPost {
 		$opt_albums.='<option value="-2">'.__("Create new album").'</option>';
 
 		echo '
-			<tr class="form-field">
+			<tr class="form-field"> ddd
 				<th scope="row" valign="top"><label for="cb_exporttovk">'.__("Export to VK?").'</label></th>
 				<td>
 					<input type="checkbox" style="width:10px; margin-right:5px;" name="cb_exporttovk" value="true" '.(($exportToVK)? "checked":$exportToVK).' />'.__("Export").'<br>
