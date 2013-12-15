@@ -21,6 +21,9 @@ class VKWallPost {
 		
 		include 'setup.php';
 		$setup=new SetupVKWP(__FILE__);
+		
+		require_once('FirePHPCore/FirePHP.class.php');
+		$this->firephp = FirePHP::getInstance(true);
 					
 		add_action('init', array($this, 'init'), 1);
 		add_action('admin_menu', array(&$this, 'admin_menu'));
@@ -203,7 +206,8 @@ class VKWallPost {
 		$albums=VkApi::invoke('photos.getAlbums', array(
 				'oid' => '-23914086'
 		));	
-		
+		$this->firephp->log("DDDD");
+		$this->firephp->log($albums);
 		return $albums;
 	}
 
@@ -214,7 +218,7 @@ class VKWallPost {
 		if (!$exportToAlbum) $exportToAlbum=-1;
 
 		$albums=$this->getAllAlbums();
-		var_dump($albums); die();
+		
 		$opt_albums='';
 		foreach ($albums as $album) {
 			$opt_albums.='<option value='.$album->aid.' '.(($album->aid==$exportToAlbum)? "selected": "" ).' >'.$album->title.'</option>';
