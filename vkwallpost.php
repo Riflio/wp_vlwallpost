@@ -7,17 +7,6 @@ Version: 0.1
 Author: PavelK
 Author URI: http://pavelk.ru
 */
-require_once('php-console/src/PhpConsole/__autoload.php');
-$handler = PhpConsole\Handler::getInstance();
-$handler->start();
-$handler->debug('called from handler debug', 'some.three.tags');
-PhpConsole\Helper::register();
-
-$connector = PhpConsole\Connector::getInstance();
-$connector->setPassword("bvfy");
-
-PC::debug($setup, 'tag');
-PC::tag($setup);
 
 
 require_once('vkapi.php');
