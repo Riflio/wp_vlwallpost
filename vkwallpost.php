@@ -23,11 +23,11 @@ class VKWallPost {
 		include 'setup.php';
 		$setup=new SetupVKWP(__FILE__);
 
-		if(PhpConsole\Connector::getInstance()->isActiveClient()) {
-        // ... any PHP Console initialization & configuration code
-		}
+		$handler = PhpConsole\Handler::getInstance();
+		$handler->start();
+		$handler->debug('called from handler debug', 'some.three.tags');
 		PhpConsole\Helper::register();
-		
+
 		PC::debug($setup, 'tag');
 		PC::tag($setup);
 		
