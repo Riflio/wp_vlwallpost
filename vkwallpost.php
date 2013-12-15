@@ -8,6 +8,14 @@ Author: PavelK
 Author URI: http://pavelk.ru
 */
 require_once('php-console/src/PhpConsole/__autoload.php');
+$handler = PhpConsole\Handler::getInstance();
+$handler->start();
+$handler->debug('called from handler debug', 'some.three.tags');
+PhpConsole\Helper::register();
+
+PC::debug($setup, 'tag');
+PC::tag($setup);
+
 
 require_once('vkapi.php');
 require_once('listtablegroups.php');
@@ -23,14 +31,7 @@ class VKWallPost {
 		include 'setup.php';
 		$setup=new SetupVKWP(__FILE__);
 
-		$handler = PhpConsole\Handler::getInstance();
-		$handler->start();
-		$handler->debug('called from handler debug', 'some.three.tags');
-		PhpConsole\Helper::register();
 
-		PC::debug($setup, 'tag');
-		PC::tag($setup);
-		
 		add_action('init', array($this, 'init'), 1);
 		add_action('admin_menu', array(&$this, 'admin_menu'));
 		add_action('wp_ajax_exportaction', array(&$this, 'ajax_exportaction'));
