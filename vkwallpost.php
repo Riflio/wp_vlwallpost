@@ -203,7 +203,7 @@ class VKWallPost {
 		$albums=VkApi::invoke('photos.getAlbums', array(
 				'oid' => '-23914086'
 		));	
-		var_dump($albums);
+		
 		return $albums;
 	}
 
@@ -214,6 +214,7 @@ class VKWallPost {
 		if (!$exportToAlbum) $exportToAlbum=-1;
 
 		$albums=$this->getAllAlbums();
+		var_dump($albums);
 		$opt_albums='';
 		foreach ($albums as $album) {
 			$opt_albums.='<option value='.$album->aid.' '.(($album->aid==$exportToAlbum)? "selected": "" ).' >'.$album->title.'</option>';
