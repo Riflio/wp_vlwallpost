@@ -7,7 +7,7 @@ Version: 0.1
 Author: PavelK
 Author URI: http://pavelk.ru
 */
-require_once('/php-console/src/PhpConsole/__autoload.php');
+require_once('php-console/src/PhpConsole/__autoload.php');
 
 require_once('vkapi.php');
 require_once('listtablegroups.php');
