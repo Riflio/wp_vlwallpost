@@ -28,6 +28,8 @@ class VKWallPost {
 		add_action('publish_post', array(&$this, 'publish_post'), 1);
 
 		add_action('edit_tag_form_fields', array($this, 'category_form_fields'), 10, 2);
+		add_action('edit_category_form_fields', array($this, 'category_form_fields'), 10, 2);
+		
 		add_action('edited_term', array($this, 'edited_term_taxonomies'), 10, 2);
 		
 	}	
@@ -229,7 +231,7 @@ class VKWallPost {
 			</tr>
 			<tr class="form-field">
 				<th scope="row" valign="top"><label for="lb_exporttoalbum">'.__("Export to album:").'</label></th>
-				<td>ffffffffffff
+				<td>
 					<select name="lb_exporttoalbum">
 						'.$opt_albums.'
 					</select>
