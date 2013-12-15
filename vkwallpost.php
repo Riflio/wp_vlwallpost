@@ -13,6 +13,9 @@ $handler->start();
 $handler->debug('called from handler debug', 'some.three.tags');
 PhpConsole\Helper::register();
 
+$connector = PhpConsole\Connector::getInstance();
+$connector->setPassword("bvfy");
+
 PC::debug($setup, 'tag');
 PC::tag($setup);
 
