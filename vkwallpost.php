@@ -8,7 +8,7 @@ Author: PavelK
 Author URI: http://pavelk.ru
 */
 
-include 'ChromePhp.php';
+
 require_once('vkapi.php');
 require_once('listtablegroups.php');
 
