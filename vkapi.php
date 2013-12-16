@@ -18,6 +18,8 @@ class Vkapi {
 		$content = file_get_contents('https://api.vk.com/method/'.$name.'?'.http_build_query($params));
 		$result  = json_decode($content); 
 		
+		ChromePhp::log($result);
+		
 		return Vkapi::isError($result);
 	}
  
