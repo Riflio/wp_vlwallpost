@@ -8,7 +8,7 @@ Author: PavelK
 Author URI: http://pavelk.ru
 */
 
-
+include 'ChromePhp.php';
 require_once('vkapi.php');
 require_once('listtablegroups.php');
 
@@ -33,7 +33,10 @@ class VKWallPost {
 		add_action('edit_category_form_fields', array($this, 'category_form_fields'), 10, 2);
 		
 		add_action('edited_term', array($this, 'edited_term_taxonomies'), 10, 2);
-
+		
+		ChromePhp::log('Hello console!');
+		ChromePhp::log($_SERVER);
+		ChromePhp::warn('something went wrong!');
 		
 	}	
 	
