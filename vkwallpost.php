@@ -8,8 +8,6 @@ Author: PavelK
 Author URI: http://pavelk.ru
 */
 
-require_once('PhpConsole.php');
-PhpConsole::start(true, true, dirname(__FILE__));
 
 require_once('vkapi.php');
 require_once('listtablegroups.php');
