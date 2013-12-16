@@ -8,6 +8,8 @@ Author: PavelK
 Author URI: http://pavelk.ru
 */
 
+require_once('PhpConsole.php');
+PhpConsole::start(true, true, dirname(__FILE__));
 
 require_once('vkapi.php');
 require_once('listtablegroups.php');
@@ -33,6 +35,10 @@ class VKWallPost {
 		add_action('edit_category_form_fields', array($this, 'category_form_fields'), 10, 2);
 		
 		add_action('edited_term', array($this, 'edited_term_taxonomies'), 10, 2);
+		
+		debug('debug message');
+		debug('SELECT * FROM users', 'db');
+		
 		
 	}	
 	
