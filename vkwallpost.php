@@ -34,7 +34,7 @@ class VKWallPost {
 
 		add_action('edited_term', array($this, 'edited_term_taxonomies'), 10, 2);
 
-		add_action('admin_notices', array($this, 'showAdminMessages'), 0);
+		
 		
 			
 	}
@@ -215,6 +215,9 @@ class VKWallPost {
 	}
 
 	function category_form_fields($tag) {
+		
+		add_action('admin_notices', array($this, 'showAdminMessages'), 0);
+		
 		$exportToVK = get_metadata('vk', $tag->term_id, 'exportToVK', true);
 		$exportToAlbum = get_metadata('vk', $tag->term_id, 'exportToAlbum', true);
 		if (!$exportToVK) $exportToVK=false;
