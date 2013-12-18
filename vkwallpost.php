@@ -261,7 +261,7 @@ class VKWallPost {
 
 	function showAdminMessages() {
 		
-		echo '<div id="message" class="error">TESTT</div>';
+		echo '<div id="message" class="error">'; var_dump(Vkapi::$error); echo '</div>';
 		
 		if (Vkapi::$error!=false) {
 			if (Vkapi::$error->error_code==14) {
