@@ -37,9 +37,9 @@ class Vkapi {
 	public static function isError($res) {
 		
 		if ($res->error)  {		
-			$this->error=$res->error;			
+			self::$error=$res->error;			
 		} else {
-			$this->error=false;
+			self::$error=false;
 			return $result->response;
 		}			
 		
