@@ -7,6 +7,8 @@ class Vkapi {
 	protected static $_client_id = 71074831;
 	protected static $_access_token = '551d66fd4df06054ebb6ba23bc8b6963d35f39bbfc28c38ce5ce58170bdef17a9e7e1843a5de241721092';
 	
+	public static $error = false; //-- запоминаем последнюю ошибку
+	
 	public static function invoke ($name, array $params = array())	{
 		$params['access_token'] = self::$_access_token;	
 		
@@ -33,37 +35,11 @@ class Vkapi {
 	}
 
 	public static function isError($res) {
+		
 		if ($res->error)  {		
-
-			echo '
-			<div id="VKAPIErrorCAPTCHA" style="display:none;">
-				<h3>VKAPI CAPTCH NEEDLE</h3>
-				<img src="'.$res->error->captcha_img.'" /><br>
-				<input type="text" size=60 id="captch_val"/>
-				<input type="button" id="sendbtn" value="OK" />				
-			</div>
-			<div id="ErrorVKAPIParams"  style="display:none;">
-				<h3>VKAPI ERROR PARAMS</h3>
-				<div id="errormsg"></div>
-				Contact with author.
-			</div>
-			<script>
-				jQuery(document).ready(function($) {
-						var error='. json_encode($res->error).'; 
-						$("#errormsg").html(error.error_msg);
-						if (error.error_code==14) {
-							$("#VKAPIErrorCAPTCHA").modal();		
-							$("#sendbtn").click(function() {
-								window.location.href+=("&captcha_sid="+error.captcha_sid+"&captcha_key="+$("#captch_val").val());
-							});								
-						} else {							
-							$("#ErrorVKAPIParams").modal();	
-						}
-						
-				});			 
-			</script>';	
-			return $res->error->error_code;
+			$this->error=$res->error;			
 		} else {
+			$this->error=false;
 			return $result->response;
 		}			
 		
