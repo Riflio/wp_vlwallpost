@@ -19,29 +19,27 @@ class VKWallPost {
 		//-- подгрузим язык --//
 		define('TEXTDOMAIN', 'default');		
 		load_plugin_textdomain(TEXTDOMAIN, PLUGINDIR.'/'.dirname(plugin_basename(__FILE__)).'/langs');
-		
+					
 		include 'setup.php';
 		$setup=new SetupVKWP(__FILE__);
-
-
-		add_action('init', array($this, 'init'), 1);
+		
+		
+		add_action('init', array($this, 'init'));
 		add_action('admin_menu', array(&$this, 'admin_menu'));
 		add_action('wp_ajax_exportaction', array(&$this, 'ajax_exportaction'));
 		add_action('publish_post', array(&$this, 'publish_post'), 1);
-
+		
 		add_action('edit_tag_form_fields', array($this, 'category_form_fields'), 10, 2);
 		add_action('edit_category_form_fields', array($this, 'category_form_fields'), 10, 2);
 		
 		add_action('edited_term', array($this, 'edited_term_taxonomies'), 10, 2);
-		
-	
-
-		
+			
 	}	
 	
 	function init() {
 		global $wpdb;
 		wp_localize_script( 'VKWallPost', 'VKWallPost', array());
+		var_dump("FFFFFF");
 		wp_register_script('VKWallPost', plugins_url('/vkwallpost.js', __FILE__ ), array('jquery'));	
 		wp_register_script('SimpleModal',plugins_url('/simple-modal.js', __FILE__ ), array('jquery'));
 		wp_register_style('SimpleModal',plugins_url('/simple-modal.css', __FILE__ ));
