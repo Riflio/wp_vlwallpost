@@ -34,7 +34,7 @@ class VKWallPost {
 
 		add_action('edited_term', array($this, 'edited_term_taxonomies'), 10, 2);
 
-		add_action('admin_notices', array($this, 'showAdminMessages'), 10);
+		add_action('admin_notices', array($this, 'showAdminMessages'), 0);
 		
 			
 	}
