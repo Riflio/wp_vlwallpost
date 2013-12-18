@@ -215,9 +215,6 @@ class VKWallPost {
 	}
 
 	function category_form_fields($tag) {
-		
-		add_action('admin_notices', array($this, 'showAdminMessages'), 0);
-		
 		$exportToVK = get_metadata('vk', $tag->term_id, 'exportToVK', true);
 		$exportToAlbum = get_metadata('vk', $tag->term_id, 'exportToAlbum', true);
 		if (!$exportToVK) $exportToVK=false;
@@ -225,6 +222,7 @@ class VKWallPost {
 
 		$albums=$this->getAllAlbums();
 		
+		add_action('admin_notices', array($this, 'showAdminMessages'), 10000);
 
 		$opt_albums='';
 		foreach ($albums as $album) {
