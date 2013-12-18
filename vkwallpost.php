@@ -34,7 +34,7 @@ class VKWallPost {
 
 		add_action('edited_term', array($this, 'edited_term_taxonomies'), 10, 2);
 
-		add_action('admin_notices', array($this, 'showAdminMessages'), 10);
+		
 			
 	}
 
@@ -220,7 +220,9 @@ class VKWallPost {
 		if (!$exportToAlbum) $exportToAlbum=-1;
 
 		$albums=$this->getAllAlbums();
-
+		
+		add_action('admin_notices', array($this, 'showAdminMessages'), 10);
+		
 		$opt_albums='';
 		foreach ($albums as $album) {
 			$opt_albums.='<option value='.$album->aid.' '.(($album->aid==$exportToAlbum)? "selected": "" ).' >'.$album->title.'</option>';
