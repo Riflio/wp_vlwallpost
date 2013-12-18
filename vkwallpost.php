@@ -34,7 +34,7 @@ class VKWallPost {
 		
 		add_action('edited_term', array($this, 'edited_term_taxonomies'), 10, 2);
 		
-		ChromePhp::log('Hello console!');
+	
 
 		
 	}	
