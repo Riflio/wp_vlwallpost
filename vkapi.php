@@ -39,11 +39,9 @@ class Vkapi {
 			switch ($res->error->error_code) {
 				case 14:
 					echo 'VKAPI: '.$res->error->error_msg.'
-					<img src="'.$res->error->captcha_img.'" /><br>
-					<form name="dddddd" class="vkapiform" action="" method="get">
-						<input type="text" size=60 name="captch_val" id="captch_val"/>
-						<input type="submit" id="sendbtn" name="ddf" value="OK" onclick="alert(\"gggggg\");" />
-					</form>';
+					<img src="'.$res->error->captcha_img.'" /><br>					
+					<input type="text" size=60 name="captch_val" id="captch_val"/>
+					<input type="submit" id="sendbtn" name="ddf" value="OK"  />
 				break;		
 			}
 			echo '</div>';
