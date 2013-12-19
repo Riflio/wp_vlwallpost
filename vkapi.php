@@ -37,14 +37,21 @@ class Vkapi {
 	public static function isError($res) {
 		
 		if ($res->error)  {		
-			self::$error=$res->error;	
-			echo '<div id="message" class="error">TTTTT</div>';		
+			echo '<div id="message" class="error">';	
+			switch () {
+				case 14:
+					echo 'VKAPI: '.Vkapi::$error->error_msg.'
+					<img src="'.$res->error->captcha_img.'" /><br>
+					<input type="text" size=60 id="captch_val"/>
+					<input type="button" id="sendbtn" value="OK" />';
+				break;		
+			}
+			echo '</div>';
+			return false;
 		} else {
-			self::$error=false;
 			return $result->response;
-		}			
+		}					
 		
-		return false;
 	}
 	
 	public static function uploadFile($uploadUrl, $files) {

@@ -264,22 +264,6 @@ class VKWallPost {
 
 	function showAdminMessages() {
 		
-		echo '<div id="message" class="error">'; var_dump(Vkapi::$error); echo '</div>';
-		
-		if (Vkapi::$error!=false) {
-			if (Vkapi::$error->error_code==14) {
-				echo '
-					
-					<div id="message" class="error">
-						VKAPI: '.Vkapi::$error->error_msg.'					
-						<img src="'.$res->error->captcha_img.'" /><br>
-						<input type="text" size=60 id="captch_val"/>
-						<input type="button" id="sendbtn" value="OK" />				
-					</div>
-				';
-			}
-		}
-
 	}
 
 }
