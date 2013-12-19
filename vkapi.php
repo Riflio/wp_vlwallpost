@@ -42,7 +42,7 @@ class Vkapi {
 					<img src="'.$res->error->captcha_img.'" /><br>
 					<form name="dddddd" class="vkapiform" action="?" method="GET">
 						<input type="text" size=60 id="captch_val"/>
-						<input type="submit" id="sendbtn" value="OK" onClick="submit();" />
+						<input type="submit" id="sendbtn" value="OK" onclick="alert(\"gggggg\");" />
 					</form>';
 				break;		
 			}
