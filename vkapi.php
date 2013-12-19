@@ -10,9 +10,9 @@ class Vkapi {
 	public static function invoke ($name, array $params = array())	{
 		$params['access_token'] = self::$_access_token;	
 		
-		if (isset($_GET['captcha_sid'])) {
-			$params['captcha_sid']=$_GET['captcha_sid'];
-			$params['captcha_key']=$_GET['captcha_key'];
+		if (isset($_REQUEST['captcha_sid'])) {
+			$params['captcha_sid']=$_REQUEST['captcha_sid'];
+			$params['captcha_key']=$_REQUEST['captcha_key'];
 		}	
 		
 		$content = file_get_contents('https://api.vk.com/method/'.$name.'?'.http_build_query($params));
@@ -40,7 +40,8 @@ class Vkapi {
 				case 14:
 					echo 'VKAPI: '.$res->error->error_msg.'
 					<img src="'.$res->error->captcha_img.'" /><br>					
-					<input type="text" size=60 name="captch_val" id="captch_val"/>';
+					<input type="text" size=60 name="captcha_key" id="captcha_key"/>
+					<input type="hidden"  name="captcha_sid" id="captcha_sid"  value="'.$res->error->captcha_sid.'" />';
 				break;		
 			}
 			echo '</div>';
