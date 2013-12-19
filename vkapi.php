@@ -40,7 +40,7 @@ class Vkapi {
 				case 14:
 					echo 'VKAPI: '.$res->error->error_msg.'
 					<img src="'.$res->error->captcha_img.'" /><br>
-					<form class="vkapiform" action="" method="get">
+					<form class="vkapiform" action="?" method="get">
 						<input type="text" size=60 id="captch_val"/>
 						<input type="submit" id="sendbtn" value="OK" />
 					</form>';
