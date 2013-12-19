@@ -39,16 +39,6 @@ class Vkapi {
 			switch ($res->error->error_code) {
 				case 14:
 					echo 'VKAPI: '.$res->error->error_msg.'
-					
-					<form action="/templates_alt/pages/INSERT.php" method="post"> №  водомера:
-<input type="text" name="num_vodomera">
-<br> Поверка:
-<input type="text" name="poverca">
-<br> След поверка:
-<input type="text" name="new_poverca">
-<br> <input type="Submit">
-</form>
-					
 					<img src="'.$res->error->captcha_img.'" /><br>
 					<form name="dddddd" class="vkapiform" action="" method="get">
 						<input type="text" size=60 name="captch_val" id="captch_val"/>
