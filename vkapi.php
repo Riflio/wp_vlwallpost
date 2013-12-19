@@ -38,7 +38,7 @@ class Vkapi {
 		
 		if ($res->error)  {		
 			self::$error=$res->error;	
-			var_dump($res->error);		
+			echo '<div id="message" class="error">TTTTT</div>';		
 		} else {
 			self::$error=false;
 			return $result->response;
