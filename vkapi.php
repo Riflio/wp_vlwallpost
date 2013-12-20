@@ -11,8 +11,6 @@ class Vkapi {
 		$params['access_token'] = self::$_access_token;	
 		
 		if (isset($_REQUEST['captcha_sid'])) {
-			echo "FFFF";
-			die();
 			$params['captcha_sid']=$_REQUEST['captcha_sid'];
 			$params['captcha_key']=$_REQUEST['captcha_key'];
 		}	
@@ -37,13 +35,13 @@ class Vkapi {
 	public static function isError($res) {
 		
 		if ($res->error)  {		
-			echo '<div id="message" class="error">';	
+			echo '<tr><td><div id="message" class="error">';	
 			switch ($res->error->error_code) {
 				case 14:
 					echo 'VKAPI: '.$res->error->error_msg.'
 					<img src="'.$res->error->captcha_img.'" /><br>					
-					<input type="text" size=60 name="captcha_key" id="captcha_key"/>
-					<input type="hidden"  name="captcha_sid" id="captcha_sid"  value="'.$res->error->captcha_sid.'" />';
+					<input type="text" size=60 name="captcha_key" id="captcha_key" />
+					<input type="hidden"  name="captcha_sid" id="captcha_sid"  value="'.$res->error->captcha_sid.'" /></td></tr>';
 				break;		
 			}
 			echo '</div>';
