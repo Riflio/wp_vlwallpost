@@ -54,10 +54,8 @@ class Vkapi {
 	}
 	
 	public static function refresh() {
-		if (isset($_POST['captcha_sid'])) {
-			echo $_SERVER['HTTP_HOST'].$_POST['_wp_http_referer'].'&captcha_sid='.$_POST['captcha_sid'].'&captcha_key='.$_POST['captcha_key'];
-			die();
-			wp_redirect($_POST['_wp_http_referer'].'&captcha_sid='.$_POST['captcha_sid'].'&captcha_key='.$_POST['captcha_key']);
+		if (isset($_POST['captcha_sid'])) {			
+			wp_redirect( $_SERVER['HTTP_HOST'].$_POST['_wp_http_referer'].'&captcha_sid='.$_POST['captcha_sid'].'&captcha_key='.$_POST['captcha_key']);
 		}
 	}
 	
