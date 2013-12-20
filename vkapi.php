@@ -35,13 +35,13 @@ class Vkapi {
 	public static function isError($res) {
 		
 		if ($res->error)  {		
-			echo '<tr><td><div id="message" class="error">';	
+			echo '<div id="ymessage" class="yerror">';	
 			switch ($res->error->error_code) {
 				case 14:
 					echo 'VKAPI: '.$res->error->error_msg.'
 					<img src="'.$res->error->captcha_img.'" /><br>					
 					<input type="text" size=60 name="captcha_key" id="captcha_key" />
-					<input type="hidden"  name="captcha_sid" id="captcha_sid"  value="'.$res->error->captcha_sid.'" /></td></tr>';
+					<input type="hidden"  name="captcha_sid" id="captcha_sid"  value="'.$res->error->captcha_sid.'" />';
 				break;		
 			}
 			echo '</div>';
