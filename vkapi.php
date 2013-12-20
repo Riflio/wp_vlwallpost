@@ -10,9 +10,10 @@ class Vkapi {
 	public static function invoke ($name, array $params = array())	{
 		$params['access_token'] = self::$_access_token;	
 		
-		if (isset($_REQUEST['captcha_sid'])) {
-			$params['captcha_sid']=$_REQUEST['captcha_sid'];
-			$params['captcha_key']=$_REQUEST['captcha_key'];
+		if (isset($_POST['captcha_sid'])) {
+			$params['captcha_sid']=$_POST['captcha_sid'];
+			$params['captcha_key']=$_POST['captcha_key'];
+			unset($_POST['captcha_sid']);
 		}	
 		
 		$content = file_get_contents('https://api.vk.com/method/'.$name.'?'.http_build_query($params));
@@ -53,10 +54,8 @@ class Vkapi {
 	}
 	
 	public static function refresh() {
-		if (isset($_REQUEST['captcha_sid'])) {
-			echo "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-			die();
-			wp_redirect("http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+		if (isset($_POST['captcha_sid'])) {
+			wp_redirect($_POST['_wp_http_referer'].'&captcha_sid='.$_POST['captcha_sid'].'&captcha_key='.$_POST['captcha_key']);
 		}
 	}
 	
