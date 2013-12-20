@@ -11,6 +11,8 @@ class Vkapi {
 		$params['access_token'] = self::$_access_token;	
 		
 		if (isset($_REQUEST['captcha_sid'])) {
+			echo "FFFF";
+			die();
 			$params['captcha_sid']=$_REQUEST['captcha_sid'];
 			$params['captcha_key']=$_REQUEST['captcha_key'];
 		}	
