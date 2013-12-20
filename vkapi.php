@@ -10,10 +10,10 @@ class Vkapi {
 	public static function invoke ($name, array $params = array())	{
 		$params['access_token'] = self::$_access_token;	
 		
-		if (isset($_POST['captcha_sid'])) {
-			$params['captcha_sid']=$_POST['captcha_sid'];
-			$params['captcha_key']=$_POST['captcha_key'];
-			unset($_POST['captcha_sid']);
+		if (isset($_GET['captcha_sid'])) {
+			$params['captcha_sid']=$_GET['captcha_sid'];
+			$params['captcha_key']=$_GET['captcha_key'];
+			unset($_GET['captcha_sid']);
 		}	
 		
 		$content = file_get_contents('https://api.vk.com/method/'.$name.'?'.http_build_query($params));
