@@ -54,6 +54,8 @@ class Vkapi {
 	
 	public static function refresh() {
 		if (isset($_REQUEST['captcha_sid'])) {
+			echo 'DFDDDDDD';
+			die();
 			wp_redirect("http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
 		}
 	}
