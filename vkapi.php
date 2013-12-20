@@ -35,7 +35,7 @@ class Vkapi {
 	public static function isError($res) {
 		
 		if ($res->error)  {		
-			echo '<div id="ymessage" class="error">';	
+			echo '<div class="vkerror">';	
 			switch ($res->error->error_code) {
 				case 14:
 					echo 'VKAPI: '.$res->error->error_msg.'
