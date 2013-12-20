@@ -55,7 +55,7 @@ class Vkapi {
 	
 	public static function refresh() {
 		if (isset($_POST['captcha_sid'])) {
-			echo $_POST['_wp_http_referer'].'&captcha_sid='.$_POST['captcha_sid'].'&captcha_key='.$_POST['captcha_key'];
+			echo $_SERVER['HTTP_HOST'].$_POST['_wp_http_referer'].'&captcha_sid='.$_POST['captcha_sid'].'&captcha_key='.$_POST['captcha_key'];
 			die();
 			wp_redirect($_POST['_wp_http_referer'].'&captcha_sid='.$_POST['captcha_sid'].'&captcha_key='.$_POST['captcha_key']);
 		}
