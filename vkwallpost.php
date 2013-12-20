@@ -257,7 +257,7 @@ class VKWallPost {
 		$exportToVK=(isset($_POST['cb_exporttovk']))? $_POST['cb_exporttovk'] : false;
 		update_metadata('vk', $term_id, 'exportToVK', $exportToVK);
 		
-		
+		Vkapi::refresh(); 
 		
 		$exportToAlbum=(isset($_POST['lb_exporttoalbum']))? $_POST['lb_exporttoalbum'] : -1;
 		update_metadata('vk', $term_id, 'exportToAlbum', $exportToAlbum);

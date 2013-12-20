@@ -52,6 +52,12 @@ class Vkapi {
 		
 	}
 	
+	public static function refresh() {
+		if (isset($_REQUEST['captcha_sid'])) {
+			wp_redirect("http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];);
+		}
+	}
+	
 	public static function uploadFile($uploadUrl, $files) {
 		//$files['photo'] = '@'.'path to photo'; 
         $ch = curl_init();
