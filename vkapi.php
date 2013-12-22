@@ -34,7 +34,6 @@ class Vkapi {
 	}
 
 	public static function isError($res) {
-		var_dump($res);
 		if ($res->error)  {		
 			echo '<div class="vkerror">';	
 			switch ($res->error->error_code) {
@@ -51,7 +50,7 @@ class Vkapi {
 			echo '</div>';
 			return false;
 		} else {
-			return $result->response;
+			return $res->response;
 		}					
 		
 	}
