@@ -44,9 +44,9 @@ class VKWallPost {
 		wp_localize_script( 'VKWallPost', 'VKWallPost', array());
 
 		wp_register_script('VKWallPost', plugins_url('/vkwallpost.js', __FILE__ ), array('jquery'));
+		wp_register_style('VKWallPost',plugins_url('/vkwallpost.css', __FILE__ ));
+		
 
-		//wp_register_script('SimpleModal',plugins_url('/simple-modal.js', __FILE__ ), array('jquery'));
-		//wp_register_style('SimpleModal',plugins_url('/simple-modal.css', __FILE__ ));
 		$wpdb->vkmeta = "{$wpdb->prefix}vkmeta";
 	}
 
@@ -64,8 +64,7 @@ class VKWallPost {
 
 	function menu_export() {
 		wp_enqueue_script("VKWallPost");
-		wp_enqueue_script("SimpleModal");
-		wp_enqueue_style("SimpleModal");
+		wp_enqueue_style("VKWallPost");
 		$listTable=new VKWP__List_Table($this);
 		$listTable->prepare_items($this->listPosts());
 		echo '
@@ -105,15 +104,16 @@ class VKWallPost {
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m2 ON m2.meta_key='exportToAlbum' and m2.meta_value>0 and  m2.vk_id=m.vk_id
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
 				RIGHT JOIN `{$wpdb->prefix}posts` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATE)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATE)
-				WHERE m.meta_key='exportToVK' and m.meta_value='true' ORDER BY p.post_date ASC
-				");
+				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) ) ORDER BY p.post_date ASC
+		");
 
 		$result=array();
 		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
 		foreach ($posts as $post) {
-			$res[]=array('id'=>$post->ID, 'title'=>$post->post_title, 'album'=>$post->exportToAlbum);
+			$res[]=array('id'=>$post->ID, 'title'=>$post->post_title, 'album'=>$post->exportToAlbum, 'export'=>true);
 		}
 		return $res;
+		
 	}
 
 	function ajax_exportaction() {
@@ -128,43 +128,42 @@ class VKWallPost {
 
 		foreach ($posts as $post) {
 				
-
-			//-- прогрузим картинку для сообщения стены
-			if (has_post_thumbnail($post->ID)) {
-				$vkUPServer=Vkapi::invoke("photos.getWallUploadServer", array(
-						//"aid"=>$post->exportToAlbum,
-						"gid"=>"23914086",
-						"save_big"=>1
-				)); //TODO: А надо ли каждый раз? О_о
-				if (!$vkUPServer) die("Problem with get upload server"); //-- ошибка с vkapi.php, пусть сам разбирается.
-
-
-				$thumbPath=get_attached_file(get_post_thumbnail_id($post->ID));
-				$upFileData=Vkapi::uploadFile($vkUPServer->upload_url, array('photo'=>"@{$thumbPath}"));
-				if (!$upFileData) die("Problem with upload file");
-
-				$saveFileData=Vkapi::invoke("photos.saveWallPhoto", array(
-						"server"=>$upFileData->server,
-						"photo"=>$upFileData->photo, //TODO: Доки говорят, что внутри может быть другой json
-						"hash"=>$upFileData->hash,
-						"gid"=>"23914086",
-						"caption"=>$post->post_title
+			if ($post->exportToVK==true) {
+				//-- прогрузим картинку для сообщения стены
+				if (has_post_thumbnail($post->ID)) {
+					$vkUPServer=Vkapi::invoke("photos.getWallUploadServer", array(
+							//"aid"=>$post->exportToAlbum,
+							"gid"=>"23914086",
+							"save_big"=>1
+					)); //TODO: А надо ли каждый раз? О_о
+					if (!$vkUPServer) die("Problem with get upload server"); //-- ошибка с vkapi.php, пусть сам разбирается.
+		
+					$thumbPath=get_attached_file(get_post_thumbnail_id($post->ID));
+					$upFileData=Vkapi::uploadFile($vkUPServer->upload_url, array('photo'=>"@{$thumbPath}"));
+					if (!$upFileData) die("Problem with upload file");
+	
+					$saveFileData=Vkapi::invoke("photos.saveWallPhoto", array(
+							"server"=>$upFileData->server,
+							"photo"=>$upFileData->photo, //TODO: Доки говорят, что внутри может быть другой json
+							"hash"=>$upFileData->hash,
+							"gid"=>"23914086",
+							"caption"=>$post->post_title
+					));
+					if (!$saveFileData) die("photos.saveWallPhoto");
+	
+					$attachments=$saveFileData[0]->id.",".get_term_link( (int)$post->vk_id, 'types');
+				}
+					
+				//-- публикуем пост
+				$postVK=VkApi::invoke('wall.post', array(
+						'owner_id' => '-23914086',
+						'message' => $post->post_title.$post->post_content,
+						'from_group' => 1,
+						'attachments'=>$attachments
 				));
-				if (!$saveFileData) die("photos.saveWallPhoto");
-
-				$attachments=$saveFileData[0]->id.",".get_term_link( (int)$post->vk_id, 'types');
+				if (!$postVK) die("wall.post");
 			}
-				
-			//-- публикуем пост
-			$postVK=VkApi::invoke('wall.post', array(
-					'owner_id' => '-23914086',
-					'message' => $post->post_title.$post->post_content,
-					'from_group' => 1,
-					'attachments'=>$attachments
-			));
-			if (!$postVK) die("wall.post");
-
-
+			
 			//-- прогрузим фотку в альбом
 			if ($post->exportToAlbum>0) {
 				$vkUPServer=Vkapi::invoke("photos.getUploadServer", array(
@@ -217,12 +216,11 @@ class VKWallPost {
 	function category_form_fields($tag) {
 		$exportToVK = get_metadata('vk', $tag->term_id, 'exportToVK', true);
 		$exportToAlbum = get_metadata('vk', $tag->term_id, 'exportToAlbum', true);
-		if (!$exportToVK) $exportToVK=false;
-		if (!$exportToAlbum) $exportToAlbum=-1;
 
-		$albums=$this->getAllAlbums();
+		if (!$exportToVK) $exportToVK=false;
+		if (!$exportToAlbum) $exportToAlbum=-1;		
 		
-		
+		$albums=$this->getAllAlbums();		
 
 		$opt_albums='';
 		foreach ($albums as $album) {
@@ -232,36 +230,52 @@ class VKWallPost {
 		$opt_albums.='<option value="-2">'.__("Create new album").'</option>';
 
 		echo '
-		<tr class="form-field">
-		<th scope="row" valign="top"><label for="cb_exporttovk">'.__("Export to VK?").'</label></th>
-		<td>
-		<input type="checkbox" style="width:10px; margin-right:5px;" name="cb_exporttovk" value="true" '.(($exportToVK)? "checked":$exportToVK).' />'.__("Export").'<br>
-		<p class="description">'.__("All post from this category will be export to VK.").'</p>
-		</td>
-		</tr>
-		<tr class="form-field">
-		<th scope="row" valign="top"><label for="lb_exporttoalbum">'.__("Export to album:").'</label></th>
-		<td>
-		<select name="lb_exporttoalbum">
-		'.$opt_albums.'
-		</select>
-		<p class="description">'.__("All thumbs from post at this category will be export to select VK album.").'</p>
-		</td>
-		</tr>
+			<tr class="form-field">
+			<th scope="row" valign="top"><label for="cb_exporttovk">'.__("Export to VK?").'</label></th>
+			<td>
+			<input type="checkbox" style="width:10px; margin-right:5px;" name="cb_exporttovk" value="true" '.(($exportToVK)? "checked":"").' />'.__("Export").'<br>
+			<p class="description">'.__("All post from this category will be export to VK.").'</p>
+			</td>
+			</tr>
+					
+			<tr class="form-field">
+			<th scope="row" valign="top"><label for="lb_exporttoalbum">'.__("Export to album:").'</label></th>
+			<td>
+			<select name="lb_exporttoalbum">
+			'.$opt_albums.'
+			</select>
+			<p class="description">'.__("All thumbs from post at this category will be export to select VK album.").'</p>
+			</td>
+			</tr>
 		';
 
 	}
 
-	function edited_term_taxonomies($term_id) {
+	function edited_term_taxonomies($term_id) {		
+
+		if (!$term_id) return;
 		
 		VkApi::refresh();
 		
-		if (!$term_id) return;
 		$exportToVK=(isset($_POST['cb_exporttovk']))? $_POST['cb_exporttovk'] : false;
 		update_metadata('vk', $term_id, 'exportToVK', $exportToVK);		
 		
-		
 		$exportToAlbum=(isset($_POST['lb_exporttoalbum']))? $_POST['lb_exporttoalbum'] : -1;
+		
+		if ($post->exportToAlbum==-2) { //-- создадим новый альбом
+			$vkNewAlbum=Vkapi::invoke("photos.createAlbum". array(
+					'title'=>$_POST['name'],
+					'group_id'=>'23914086',
+					'description'=>$_POST['description'],
+					'comment_privacy'=>'0',
+					'privacy'=>'0'
+			));		
+			if ($vkNewAlbum) {
+				$exportToAlbum=$vkNewAlbum->id;
+			} else $exportToAlbum=-1;
+		}
+		
+		
 		update_metadata('vk', $term_id, 'exportToAlbum', $exportToAlbum);
 	}
 
