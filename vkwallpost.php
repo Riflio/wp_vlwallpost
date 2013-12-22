@@ -263,7 +263,7 @@ class VKWallPost {
 		$exportToAlbum=(isset($_POST['lb_exporttoalbum']))? $_POST['lb_exporttoalbum'] : -1;
 		
 		if ($exportToAlbum==-2) { //-- создадим новый альбом
-			$vkNewAlbum=Vkapi::invoke("photos.createAlbum". array(
+			$vkNewAlbum=Vkapi::invoke("photos.createAlbum", array(
 					'title'=>$_POST['name'],
 					'group_id'=>'23914086',
 					'description'=>$_POST['description'],
