@@ -270,7 +270,7 @@ class VKWallPost {
 					'comment_privacy'=>'0',
 					'privacy'=>'0'
 			));		
-			var_dump($vkNewAlbum); die();
+			
 			if ($vkNewAlbum!==false) {
 				$exportToAlbum=$vkNewAlbum->id;
 			} else $exportToAlbum=-1;
