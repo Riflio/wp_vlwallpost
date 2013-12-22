@@ -254,17 +254,15 @@ class VKWallPost {
 	function edited_term_taxonomies($term_id) {		
 
 		if (!$term_id) return;
-		var_dump($_POST); die();
-		VkApi::refresh();
-		
-		
+
+		VkApi::refresh();		
 		
 		$exportToVK=(isset($_POST['cb_exporttovk']))? $_POST['cb_exporttovk'] : false;
 		update_metadata('vk', $term_id, 'exportToVK', $exportToVK);		
 		
 		$exportToAlbum=(isset($_POST['lb_exporttoalbum']))? $_POST['lb_exporttoalbum'] : -1;
 		
-		if ($post->exportToAlbum==-2) { //-- создадим новый альбом
+		if ($exportToAlbum==-2) { //-- создадим новый альбом
 			$vkNewAlbum=Vkapi::invoke("photos.createAlbum". array(
 					'title'=>$_POST['name'],
 					'group_id'=>'23914086',
