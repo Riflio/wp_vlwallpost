@@ -257,6 +257,8 @@ class VKWallPost {
 		
 		VkApi::refresh();
 		
+		var_dump($_POST); die();
+		
 		$exportToVK=(isset($_POST['cb_exporttovk']))? $_POST['cb_exporttovk'] : false;
 		update_metadata('vk', $term_id, 'exportToVK', $exportToVK);		
 		
@@ -270,7 +272,7 @@ class VKWallPost {
 					'comment_privacy'=>'0',
 					'privacy'=>'0'
 			));		
-			if ($vkNewAlbum) {
+			if ($vkNewAlbum!==false) {
 				$exportToAlbum=$vkNewAlbum->id;
 			} else $exportToAlbum=-1;
 		}
