@@ -32,7 +32,7 @@ class VKWallPost {
 		add_action('edit_tag_form_fields', array($this, 'category_form_fields'), 10, 2);
 		add_action('edit_category_form_fields', array($this, 'category_form_fields'), 10, 2);
 
-		add_action('edited_term', array($this, 'edited_term_taxonomies'), 10, 2);
+		add_action('edited_terms', array($this, 'edited_term_taxonomies'), 10, 2);
 
 		add_action('admin_notices', array($this, 'showAdminMessages'), 10000);
 		
@@ -252,12 +252,12 @@ class VKWallPost {
 	}
 
 	function edited_term_taxonomies($term_id) {		
-
+		var_dump($_POST); die();
 		if (!$term_id) return;
 		
 		VkApi::refresh();
 		
-		var_dump($_POST); die();
+		
 		
 		$exportToVK=(isset($_POST['cb_exporttovk']))? $_POST['cb_exporttovk'] : false;
 		update_metadata('vk', $term_id, 'exportToVK', $exportToVK);		
