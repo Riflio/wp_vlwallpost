@@ -254,7 +254,7 @@ class VKWallPost {
 	function edited_term_taxonomies($term_id) {		
 
 		if (!$term_id) return;
-		
+		var_dump($_POST); die();
 		VkApi::refresh();
 		
 		
