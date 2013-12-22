@@ -43,6 +43,9 @@ class Vkapi {
 					<img src="'.$res->error->captcha_img.'" /><br>					
 					<input type="text" size=60 name="captcha_key" id="captcha_key" />
 					<input type="hidden"  name="captcha_sid" id="captcha_sid"  value="'.$res->error->captcha_sid.'" />';
+				break;	
+				default:
+					echo 'VKAPI: '.$res->error->error_msg.'';
 				break;		
 			}
 			echo '</div>';
