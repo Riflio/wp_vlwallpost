@@ -97,7 +97,7 @@ class VKWallPost {
 	function listPosts() {
 		global $wpdb;		
 		
-		
+		echo 'FDDDDDDDD';
 		//$wpdb->query("TRUNCATE TABLE {$wpdb->prefix}vktemp;");
 		$wpdb->query("
 				INSERT INTO {$wpdb->prefix}vktemp (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content)
