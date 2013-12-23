@@ -69,10 +69,8 @@ class VKWallPost {
 		wp_enqueue_style("VKWallPost");
 		
 		if (isset($_POST['updateenableitems'])) {
-			echo 'UPDATE';
 			$items=$_POST['cb_export'];
 			foreach ($items as $id => $item) {
-				var_dump($id, $item);
 				$wpdb->update( "{$wpdb->prefix}vktemp" , array("enable"=>($item=="true")? 1: 0) , array("ID"=>$id), array("%d"), array("%d") ); 
 			}
 		}
