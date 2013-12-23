@@ -125,7 +125,7 @@ class VKWallPost {
 		
 
 		var_dump($albums);
-		var_dump(array_search((object)array('aid'=>184120884) , $albums));
+		var_dump(array_search(array('aid'=>184120884) , $albums));
 		
 		foreach ($items as $item) {
 			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$item->exportToAlbum, 'export'=>$item->enable);
