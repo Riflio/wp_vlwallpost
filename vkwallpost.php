@@ -119,7 +119,7 @@ class VKWallPost {
 	
 		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
 		
-		$albums=VkApi::invoke("photos.getAlbums", array(
+		$albums=Vkapi::invoke("photos.getAlbums", array(
 			'owner_id'=>23914086
 		));
 		
@@ -274,7 +274,7 @@ class VKWallPost {
 
 		if (!$term_id) return;
 
-		VkApi::refresh();		
+		Vkapi::refresh();		
 		
 		$exportToVK=(isset($_POST['cb_exporttovk']))? $_POST['cb_exporttovk'] : false;
 		update_metadata('vk', $term_id, 'exportToVK', $exportToVK);		
