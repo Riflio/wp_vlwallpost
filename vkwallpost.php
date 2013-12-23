@@ -130,7 +130,7 @@ class VKWallPost {
 		
 		
 		foreach ($items as $item) {
-			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$albums[$item->exportToAlbum], 'export'=>$item->enable);			
+			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$albums[$item->exportToAlbum]->title, 'export'=>$item->enable);			
 		}
 		
 		
