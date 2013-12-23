@@ -120,7 +120,7 @@ class VKWallPost {
 		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
 		
 		$albums=Vkapi::invoke("photos.getAlbums", array(
-			'owner_id'=>23914086
+			'owner_id'=>-23914086
 		));
 		
 
