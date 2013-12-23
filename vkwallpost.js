@@ -5,6 +5,9 @@ $('#startexport').bind('click', function() {
 	exportAction({'step':0, 'total': vkmeta.total});
 });
 
+$('#cb_exportall').bind('click', function() {
+	$('.exportitem').prop('checked', $(this).prop('checked'));
+});
 
 
 function exportAction(exp) {

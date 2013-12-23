@@ -28,7 +28,7 @@ class VKWP__List_Table extends WP_List_Table {
 			'id' 		=> __('id'),
 			'title'		=> __('Title'),
 			'album'		=> __('Album'),
-			'export'	=> '<input type="checkbox" name="cb_exportall" checked value="true"  />'.__('Export')
+			'export'	=> '<input type="checkbox" name="cb_exportall" id="#cb_exportall" checked value="true"  />'.__('Export')
 		);
 		return $columns;
 	}	
@@ -52,7 +52,7 @@ class VKWP__List_Table extends WP_List_Table {
 				return $item[ $column_name ];
 			break;
 			case 'export':
-				return  '<input type="checkbox" name="cb_export" value="true" '.(($item[ $column_name ])? "checked":"").' />';
+				return  '<input type="checkbox" class="exportitem" name="cb_export[]['.$item['id'].']" value="true" '.(($item[ $column_name ])? "checked":"").' />';
 			break;	
 			default:
 				return $item[ $column_name];
