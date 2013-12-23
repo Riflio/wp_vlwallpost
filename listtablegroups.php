@@ -28,7 +28,7 @@ class VKWP__List_Table extends WP_List_Table {
 			'id' 		=> __('id'),
 			'title'		=> __('Title'),
 			'album'		=> __('Album'),
-			'export'	=> __('No export').'<input type="checkbox" name="cb_exportall" id="cb_exportall" checked value="false"  />'
+			'export'	=> __('No export').'<input type="checkbox" name="cb_exportall" id="cb_exportall" value="true"  />'
 		);
 		return $columns;
 	}	
