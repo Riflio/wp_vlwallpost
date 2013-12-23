@@ -85,6 +85,7 @@ class VKWallPost {
 		</div>
 		</div>
 		<div>';
+		echo 'TABLE';
 		$listTable->display();
 		echo 	'</div>
 		</div>
@@ -96,8 +97,8 @@ class VKWallPost {
 	function listPosts() {
 		global $wpdb;		
 		
-		var_dump("FFFFFFFFFFFFF");
-		$wpdb->query("TRUNCATE TABLE {$wpdb->prefix}vktemp;");
+		
+		//$wpdb->query("TRUNCATE TABLE {$wpdb->prefix}vktemp;");
 		$wpdb->query("
 				INSERT INTO {$wpdb->prefix}vktemp (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content)
 				SELECT m.vk_id, m.meta_value as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content FROM `wp_vkmeta` as m
