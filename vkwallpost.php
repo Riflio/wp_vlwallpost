@@ -117,8 +117,16 @@ class VKWallPost {
 				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) )  AND (t.ID IS null) ORDER BY p.post_date DESC
 		");
 	
-		$result=array();
 		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
+		
+		$albums=VkApi::invoke("photos.getAlbums", array(
+			'owner_id'=>23914086
+		));
+		
+
+		var_dump($albums);
+		var_dump(array_search((object)array('id'=>184120884) , $albums->items));
+		
 		foreach ($items as $item) {
 			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$item->exportToAlbum, 'export'=>$item->enable);
 		}
@@ -131,13 +139,14 @@ class VKWallPost {
 		$_export=urldecode($_GET['export']);
 		$export  = json_decode($_export);
 		$limit=1; //TODO: Добавить в настройки сколько за раз
-		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp  LIMIT {$export->step},{$limit} ;");
+		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp  LIMIT {$limit} ;");
 
 		$nowDT = new DateTime();
-		$nowDT=$nowDT->format('Y-m-d H:i:s');
-
+		$nowDT=$nowDT->format('Y-m-d H:i:s');		
+		
 		foreach ($posts as $post) {
-				
+			if (!$post->enable) continue;	
+			
 			if ($post->exportToVK==true) {
 				//-- прогрузим картинку для сообщения стены
 				if (has_post_thumbnail($post->ID)) {
@@ -200,7 +209,7 @@ class VKWallPost {
 
 			}
 
-
+			$wpdb->delete( "{$wpdb->prefix}vktemp", array("ID"=>$post->ID), array("%d") ); 			
 			update_post_meta($post->ID, 'vkPostID', $postVK->post_id);
 			update_metadata('vk', $post->ID, 'postExportDT', $nowDT);
 		}
