@@ -107,6 +107,14 @@ class VKWallPost {
 				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) ) ORDER BY p.post_date ASC
 		");
 
+		var_dump("				INSERT INTO {$wpdb->prefix}vktemp (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content)
+				SELECT m.vk_id, m.meta_value as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content FROM `wp_vkmeta` as m
+				LEFT JOIN `{$wpdb->prefix}term_relationships` as `rs` ON rs.term_taxonomy_id=m.vk_id
+				LEFT JOIN `{$wpdb->prefix}vkmeta` as m2 ON m2.meta_key='exportToAlbum' and m2.meta_value>0 and  m2.vk_id=m.vk_id
+				LEFT JOIN `{$wpdb->prefix}vkmeta` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
+				RIGHT JOIN `{$wpdb->prefix}posts` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATE)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATE)
+				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) ) ORDER BY p.post_date ASC");
+		
 		$result=array();
 		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
 		foreach ($posts as $post) {
