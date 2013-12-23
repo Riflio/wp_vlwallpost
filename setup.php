@@ -25,6 +25,7 @@ class SetupVKWP {
 					  ID bigint(20),
 					  post_title text,
 					  post_content longtext,
+					  enable tinyint(1) default 1,
 					  UNIQUE KEY tid (tid)
 		);";
 

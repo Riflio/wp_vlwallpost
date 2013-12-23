@@ -63,8 +63,20 @@ class VKWallPost {
 	}
 
 	function menu_export() {
+		global $wpdb;
+		
 		wp_enqueue_script("VKWallPost");
 		wp_enqueue_style("VKWallPost");
+		
+		if (isset($_POST['updateenableitems'])) {
+			echo 'UPDATE';
+			$items=$_POST['cb_export'];
+			foreach ($items as $id => $item) {
+				var_dump($id, $item);
+				$wpdb->update( "{$wpdb->prefix}vktemp" , array("enable"=>($item=="true")? 1: 0) , array("ID"=>$id), array("%d"), array("%d") ); 
+			}
+		}
+		
 		$listTable=new VKWP__List_Table($this);
 		$listTable->prepare_items($this->listPosts());
 		echo '
@@ -84,9 +96,9 @@ class VKWallPost {
 		</div>
 		</div>
 		</div>
-		<div>';
+		<div><form method="post">';
 		$listTable->display();
-		echo 	'</div>
+		echo 	'<input type="submit" class="button" value="'.__('Update').'" /><input type="hidden" name="updateenableitems" value="1" /></form></div>
 		</div>
 		';
 
@@ -96,29 +108,21 @@ class VKWallPost {
 	function listPosts() {
 		global $wpdb;		
 
-		//$wpdb->query("TRUNCATE TABLE {$wpdb->prefix}vktemp;");
 		$wpdb->query("
-				INSERT INTO {$wpdb->prefix}vktemp (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content)
-				SELECT m.vk_id, m.meta_value as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content FROM `wp_vkmeta` as m
+				INSERT INTO {$wpdb->prefix}vktemp (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content, enable)
+				SELECT m.vk_id, m.meta_value as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content, 1 FROM `wp_vkmeta` as m
 				LEFT JOIN `{$wpdb->prefix}term_relationships` as `rs` ON rs.term_taxonomy_id=m.vk_id
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m2 ON m2.meta_key='exportToAlbum' and m2.meta_value>0 and  m2.vk_id=m.vk_id
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
 				RIGHT JOIN `{$wpdb->prefix}posts` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATE)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATE)
-				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) ) ORDER BY p.post_date ASC
+				LEFT JOIN {$wpdb->prefix}vktemp as t ON t.ID=p.ID
+				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) ) ORDER BY p.post_date DESC
 		");
-
-		var_dump("				INSERT INTO {$wpdb->prefix}vktemp (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content)
-				SELECT m.vk_id, m.meta_value as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content FROM `wp_vkmeta` as m
-				LEFT JOIN `{$wpdb->prefix}term_relationships` as `rs` ON rs.term_taxonomy_id=m.vk_id
-				LEFT JOIN `{$wpdb->prefix}vkmeta` as m2 ON m2.meta_key='exportToAlbum' and m2.meta_value>0 and  m2.vk_id=m.vk_id
-				LEFT JOIN `{$wpdb->prefix}vkmeta` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
-				RIGHT JOIN `{$wpdb->prefix}posts` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATE)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATE)
-				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) ) ORDER BY p.post_date ASC");
-		
+	
 		$result=array();
-		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
-		foreach ($posts as $post) {
-			$res[]=array('id'=>$post->ID, 'title'=>$post->post_title, 'album'=>$post->exportToAlbum, 'export'=>true);
+		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
+		foreach ($items as $item) {
+			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$item->exportToAlbum, 'export'=>$item->enable);
 		}
 		return $res;
 		
