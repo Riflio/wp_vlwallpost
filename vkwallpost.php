@@ -119,17 +119,21 @@ class VKWallPost {
 	
 		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
 		
-		$albums=Vkapi::invoke("photos.getAlbums", array(
+		//-- получим все альбомы и создадим массив по их айдишникам
+		$_albums=Vkapi::invoke("photos.getAlbums", array(
 			'owner_id'=>-23914086
 		));
+		$albums=array();
+		foreach ($_albums as $album) {
+			$albums[$album->aid]=$album;
+		}
 		
-
-		var_dump($albums);
-		var_dump(array_search(array('aid'=>184120884) , $albums));
 		
 		foreach ($items as $item) {
-			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$item->exportToAlbum, 'export'=>$item->enable);
+			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$albums[$item->exportToAlbum], 'export'=>$item->enable);			
 		}
+		
+		
 		return $res;
 		
 	}
