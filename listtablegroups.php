@@ -52,7 +52,10 @@ class VKWP__List_Table extends WP_List_Table {
 				return $item[ $column_name ];
 			break;
 			case 'export':
-				return  '<input type="checkbox" class="exportitem" name="cb_export['.$item['id'].']" value="true" '.(($item[ $column_name ]==0)? "checked":"").' />';
+				return  '
+						<input type="hidden" name="cb_export['.$item['id'].']"  value="false" /> 
+						<input type="checkbox" class="exportitem" name="cb_export['.$item['id'].']" value="true" '.(($item[ $column_name ]==0)? "checked":"").' />
+						';
 			break;	
 			default:
 				return $item[ $column_name];
