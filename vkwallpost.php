@@ -108,7 +108,7 @@ class VKWallPost {
 
 		$wpdb->query("
 				INSERT INTO {$wpdb->prefix}vktemp (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content, enable)
-				SELECT m.vk_id, m.meta_value as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content, 1 FROM `wp_vkmeta` as m
+				SELECT m.vk_id, CAST(m.meta_value AS SIGNED INTEGER) as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content, 1 FROM `wp_vkmeta` as m
 				LEFT JOIN `{$wpdb->prefix}term_relationships` as `rs` ON rs.term_taxonomy_id=m.vk_id
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m2 ON m2.meta_key='exportToAlbum' and m2.meta_value>-2 and  m2.vk_id=m.vk_id
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
