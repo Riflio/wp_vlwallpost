@@ -155,7 +155,7 @@ class VKWallPost {
 			if (!$post->enable) continue;	
 			
 			$hasPostThumb=has_post_thumbnail($post->ID);
-			$hasGallery=( count(get_post_gallery($post->ID, false ))>0);
+			$hasGallery=( get_post_gallery($post->ID, false )!==false );
 			
 			if ($post->exportToVK==true) {
 				$attachments=array();
