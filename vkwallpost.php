@@ -175,7 +175,7 @@ class VKWallPost {
 					));
 					if (!$saveFileData) die("photos.saveWallPhoto");
 					
-					$taxonomy_names =get_post((int)$post->vk_id);
+					$taxonomy_names = get_object_taxonomies( get_post((int)$post->ID) );
 					var_dump($taxonomy_names);
 					$attachments=$saveFileData[0]->id.",".get_term_link( (int)$post->vk_id, $taxonomy_names[0]);
 				}
