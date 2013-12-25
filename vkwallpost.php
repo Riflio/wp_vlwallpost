@@ -189,7 +189,7 @@ class VKWallPost {
 						'owner_id' => '-23914086',
 						'message' => $post->post_title.$post->post_content,
 						'from_group' => 1,
-						'attachments'=>implode(",", $attachments);
+						'attachments'=>implode(",", $attachments)
 				));
 				if (!$postVK) die("wall.post");			
 				
