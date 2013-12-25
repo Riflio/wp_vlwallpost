@@ -186,6 +186,9 @@ class VKWallPost {
 						'attachments'=>$attachments
 				));
 				if (!$postVK) die("wall.post");
+				
+				$wpdb->delete( "{$wpdb->prefix}vktemp", array("ID"=>$post->ID), array("%d") );
+				
 			}
 			
 			//-- прогрузим фотку в альбом
@@ -214,7 +217,7 @@ class VKWallPost {
 
 			}
 
-			$wpdb->delete( "{$wpdb->prefix}vktemp", array("ID"=>$post->ID), array("%d") ); 			
+			
 			update_post_meta($post->ID, 'vkPostID', $postVK->post_id);
 			update_metadata('vk', $post->ID, 'postExportDT', $nowDT);
 		}
