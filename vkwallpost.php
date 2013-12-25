@@ -154,31 +154,48 @@ class VKWallPost {
 			
 			if ($post->exportToVK==true) {
 				$attachments=array();
-				//-- прогрузим картинку для сообщения стены
-				if (has_post_thumbnail($post->ID)) {
+				//-- прогрузим картинки для сообщения стены
+				if (has_post_thumbnail($post->ID) || get_post_gallery() ) { //TODO: Проверить, есть ли внутри галерея
 					$vkUPServer=Vkapi::invoke("photos.getWallUploadServer", array(
 							//"aid"=>$post->exportToAlbum,
 							"gid"=>"23914086",
 							"save_big"=>1
 					)); //TODO: А надо ли каждый раз? О_о
 					if (!$vkUPServer) die("Problem with get upload server"); //-- ошибка с vkapi.php, пусть сам разбирается.
-		
-					$thumbPath=get_attached_file(get_post_thumbnail_id($post->ID));
-					$upFileData=Vkapi::uploadFile($vkUPServer->upload_url, array('photo'=>"@{$thumbPath}"));
-					if (!$upFileData) die("Problem with upload file");
+				
+					
+					
+					$imagesID=array();
+					
+					if (has_post_thumbnail($post->ID)) {
+						$imagesID[]=get_post_thumbnail_id($post->ID);
+					}
+					
+					if ( get_post_gallery() ) {  //TODO: Проверить, есть ли внутри галерея
+						$gallery = get_post_gallery($post->ID, false );
+						$ids=explode(",", $gallery['ids']);
+						$imagesID+=$ids;
+					}
+					var_dump($imagesID);
+					
+					foreach ($imagesID as $imageID) {
+						$imagePath=get_attached_file($imageID);
+					
+						$upFileData=Vkapi::uploadFile($vkUPServer->upload_url, array('photo'=>"@{$imagePath}"));
+						if (!$upFileData) die("Problem with upload file");
 	
-					$saveFileData=Vkapi::invoke("photos.saveWallPhoto", array(
-							"server"=>$upFileData->server,
-							"photo"=>$upFileData->photo, //TODO: Доки говорят, что внутри может быть другой json
-							"hash"=>$upFileData->hash,
-							"gid"=>"23914086",
-							"caption"=>$post->post_title
-					));
-					if (!$saveFileData) die("photos.saveWallPhoto");
-					
-					
-					$attachments[]=$saveFileData[0]->id;
+						$saveFileData=Vkapi::invoke("photos.saveWallPhoto", array(
+								"server"=>$upFileData->server,
+								"photo"=>$upFileData->photo, //TODO: Доки говорят, что внутри может быть другой json
+								"hash"=>$upFileData->hash,
+								"gid"=>"23914086",
+								"caption"=>$post->post_title
+						));
+						if (!$saveFileData) die("photos.saveWallPhoto");					
+						$attachments[]=$saveFileData[0]->id;
+					}	
 				}
+				
 
 				//-- Добавим ссылку на категорию
 				$taxonomy_names = get_object_taxonomies( get_post((int)$post->ID) );
