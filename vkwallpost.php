@@ -126,7 +126,7 @@ class VKWallPost {
 		$albums=array();
 		
 		$noalbm = new stdClass();
-		$noalbm->title=__("Without album");		
+		$noalbm->title="Without album";		
 		$albums[-1]=$noalbm;
 		
 		foreach ($_albums as $album) {
@@ -135,10 +135,11 @@ class VKWallPost {
 		
 		
 		foreach ($items as $item) {
-			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$albums[$item->exportToAlbum]->title, 'export'=>$item->enable);			
+			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$albums[$item->exportToAlbum]->title, 'export'=>$item->enable);		
+				
 		}
 		
-		
+		var_dump($res);
 		return $res;
 		
 	}
