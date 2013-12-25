@@ -117,7 +117,7 @@ class VKWallPost {
 				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) )  AND (t.ID IS null) ORDER BY p.post_date 
 		");
 	
-		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
+		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp ORDER BY tid DESC");
 		
 		//-- получим все альбомы и создадим массив по их айдишникам
 		$_albums=Vkapi::invoke("photos.getAlbums", array(
