@@ -125,9 +125,7 @@ class VKWallPost {
 		));
 		$albums=array();
 		
-		$noalbm = new stdClass();
-		$noalbm->title="Without album";		
-		$albums[-1]=$noalbm;
+		$albums[-1]=(object)array("title"=>__("Without album"));
 		
 		foreach ($_albums as $album) {
 			$albums[$album->aid]=$album;
@@ -148,7 +146,7 @@ class VKWallPost {
 		$_export=urldecode($_GET['export']);
 		$export  = json_decode($_export);
 		$limit=1; //TODO: Добавить в настройки сколько за раз
-		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp  LIMIT  {$export->step}, {$limit} ;");
+		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp  LIMIT  {$export->step}, {$limit} ORDER BY tid ASC;");
 
 		$nowDT = new DateTime();
 		$nowDT=$nowDT->format('Y-m-d H:i:s');		
