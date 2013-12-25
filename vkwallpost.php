@@ -174,8 +174,10 @@ class VKWallPost {
 							"caption"=>$post->post_title
 					));
 					if (!$saveFileData) die("photos.saveWallPhoto");
-	
-					$attachments=$saveFileData[0]->id.",".get_term_link( (int)$post->vk_id, 'types');
+					
+					$taxonomy_names = get_object_taxonomies( get_post((int)$post->vk_id) );
+					var_dump($taxonomy_names);
+					$attachments=$saveFileData[0]->id.",".get_term_link( (int)$post->vk_id, $taxonomy_names[0]);
 				}
 					
 				//-- публикуем пост
