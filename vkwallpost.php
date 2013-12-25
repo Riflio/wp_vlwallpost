@@ -132,14 +132,16 @@ class VKWallPost {
 		foreach ($_albums as $album) {
 			$albums[$album->aid]=$album;
 		}
-		
+		var_dump($albums);
 		
 		foreach ($items as $item) {
 			$res[]=array('id'=>$item->ID, 'title'=>$item->post_title, 'album'=>$albums[$item->exportToAlbum]->title, 'export'=>$item->enable);		
-				
+			var_dump($albums[$item->exportToAlbum]);
+			var_dump($item->exportToAlbum);
+			echo '<br>';
 		}
 		
-		var_dump($res);
+		
 		return $res;
 		
 	}
