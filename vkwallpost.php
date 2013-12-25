@@ -204,7 +204,7 @@ class VKWallPost {
 				$attachments[]=get_term_link( (int)$post->vk_id, $taxonomy_names[0]);
 				
 				//-- публикуем пост
-				$postVK=VkApi::invoke('wall.post', array(
+				$postVK=Vkapi::invoke('wall.post', array(
 						'owner_id' => '-23914086',
 						'message' => $post->post_title.$post->post_content,
 						'from_group' => 1,
@@ -257,7 +257,7 @@ class VKWallPost {
 	}
 
 	function getAllAlbums() {
-		$albums=VkApi::invoke('photos.getAlbums', array(
+		$albums=Vkapi::invoke('photos.getAlbums', array(
 				'oid' => '-23914086'
 		));
 
