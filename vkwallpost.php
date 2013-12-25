@@ -124,7 +124,11 @@ class VKWallPost {
 			'owner_id'=>-23914086
 		));
 		$albums=array();
-		$albums[-1]=(object)array("title"=>__("Without album"));
+		
+		$noalbm = new stdClass();
+		$noalbm->title=__("Without album");		
+		$albums[-1]=$noalbm;
+		
 		foreach ($_albums as $album) {
 			$albums[$album->aid]=$album;
 		}
