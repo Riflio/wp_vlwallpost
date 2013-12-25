@@ -184,7 +184,11 @@ class VKWallPost {
 						$imagePath=get_attached_file($imageID);
 					
 						$upFileData=Vkapi::uploadFile($vkUPServer->upload_url, array('photo'=>"@{$imagePath}"));
-						if (!$upFileData) die("Problem with upload file");
+						if (!$upFileData) {
+							var_dump($imagesID);
+							var_dump($gallery);
+							die("Problem with upload file 1");
+						}
 	
 						$saveFileData=Vkapi::invoke("photos.saveWallPhoto", array(
 								"server"=>$upFileData->server,
