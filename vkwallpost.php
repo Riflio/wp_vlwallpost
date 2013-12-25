@@ -146,7 +146,7 @@ class VKWallPost {
 		$_export=urldecode($_GET['export']);
 		$export  = json_decode($_export);
 		$limit=1; //TODO: Добавить в настройки сколько за раз
-		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp  LIMIT  {$export->step}, {$limit} ORDER BY tid ASC;");
+		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp  ORDER BY tid ASC LIMIT  {$export->step}, {$limit} ;");
 
 		$nowDT = new DateTime();
 		$nowDT=$nowDT->format('Y-m-d H:i:s');		
