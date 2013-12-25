@@ -152,10 +152,13 @@ class VKWallPost {
 		foreach ($posts as $post) {
 			if (!$post->enable) continue;	
 			
+			$hasPostThumb=has_post_thumbnail($post->ID);
+			$hasGallery=( count(get_post_gallery($post->ID, false ))>0);
+			
 			if ($post->exportToVK==true) {
 				$attachments=array();
 				//-- прогрузим картинки для сообщения стены
-				if (has_post_thumbnail($post->ID) || get_post_gallery() ) { //TODO: Проверить, есть ли внутри галерея
+				if ( $hasPostThumb || $hasGallery ) { 
 					$vkUPServer=Vkapi::invoke("photos.getWallUploadServer", array(
 							//"aid"=>$post->exportToAlbum,
 							"gid"=>"23914086",
@@ -163,21 +166,18 @@ class VKWallPost {
 					)); //TODO: А надо ли каждый раз? О_о
 					if (!$vkUPServer) die("Problem with get upload server"); //-- ошибка с vkapi.php, пусть сам разбирается.
 				
-					
-					
 					$imagesID=array();
 					
-					if (has_post_thumbnail($post->ID)) {
+					if ($hasPostThumb) {
 						$imagesID[]=get_post_thumbnail_id($post->ID);
 					}
 					
-					if ( get_post_gallery() ) {  //TODO: Проверить, есть ли внутри галерея
+					if ( $hasGallery) {  //TODO: Проверить, есть ли внутри галерея
 						$gallery = get_post_gallery($post->ID, false );
 						$ids=explode(",", $gallery['ids']);
 						$imagesID+=$ids;
 					}
-					echo 'fdgdfg'; var_dump($imagesID);
-					
+	
 					foreach ($imagesID as $imageID) {
 						$imagePath=get_attached_file($imageID);
 					
@@ -213,7 +213,7 @@ class VKWallPost {
 			}
 			
 			//-- прогрузим фотку в альбом
-			if ($post->exportToAlbum>0) {
+			if ( ($post->exportToAlbum>0) && ($hasPostThumb) ) {
 				$vkUPServer=Vkapi::invoke("photos.getUploadServer", array(
 						"aid"=>$post->exportToAlbum,
 						"gid"=>"23914086",
