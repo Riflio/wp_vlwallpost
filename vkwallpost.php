@@ -176,7 +176,7 @@ class VKWallPost {
 						$ids=explode(",", $gallery['ids']);
 						$imagesID+=$ids;
 					}
-					var_dump($imagesID);
+					echo 'fdgdfg'; var_dump($imagesID);
 					
 					foreach ($imagesID as $imageID) {
 						$imagePath=get_attached_file($imageID);
