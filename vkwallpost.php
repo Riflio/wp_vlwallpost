@@ -153,6 +153,7 @@ class VKWallPost {
 			if (!$post->enable) continue;	
 			
 			if ($post->exportToVK==true) {
+				$attachments=array();
 				//-- прогрузим картинку для сообщения стены
 				if (has_post_thumbnail($post->ID)) {
 					$vkUPServer=Vkapi::invoke("photos.getWallUploadServer", array(
@@ -175,21 +176,22 @@ class VKWallPost {
 					));
 					if (!$saveFileData) die("photos.saveWallPhoto");
 					
-					$taxonomy_names = get_object_taxonomies( get_post((int)$post->ID) );
-					var_dump($taxonomy_names);
-					$attachments=$saveFileData[0]->id.",".get_term_link( (int)$post->vk_id, $taxonomy_names[0]);
-				}
 					
+					$attachments[]=$saveFileData[0]->id;
+				}
+
+				//-- Добавим ссылку на категорию
+				$taxonomy_names = get_object_taxonomies( get_post((int)$post->ID) );
+				$attachments[]=get_term_link( (int)$post->vk_id, $taxonomy_names[0]);
+				
 				//-- публикуем пост
 				$postVK=VkApi::invoke('wall.post', array(
 						'owner_id' => '-23914086',
 						'message' => $post->post_title.$post->post_content,
 						'from_group' => 1,
-						'attachments'=>$attachments
+						'attachments'=>implode(",", $attachments);
 				));
-				if (!$postVK) die("wall.post");
-				
-				$wpdb->delete( "{$wpdb->prefix}vktemp", array("ID"=>$post->ID), array("%d") );
+				if (!$postVK) die("wall.post");			
 				
 			}
 			
@@ -218,7 +220,8 @@ class VKWallPost {
 				if (!$saveFileData) die("Problem with photos.save");
 
 			}
-
+			
+			$wpdb->delete( "{$wpdb->prefix}vktemp", array("ID"=>$post->ID), array("%d") );
 			
 			update_post_meta($post->ID, 'vkPostID', $postVK->post_id);
 			update_metadata('vk', $post->ID, 'postExportDT', $nowDT);
