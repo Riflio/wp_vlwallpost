@@ -114,7 +114,7 @@ class VKWallPost {
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
 				RIGHT JOIN `{$wpdb->prefix}posts` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATE)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATE)
 				LEFT JOIN {$wpdb->prefix}vktemp as t ON t.ID=p.ID
-				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) )  AND (t.ID IS null) ORDER BY p.post_date DESC
+				WHERE ( (m.meta_key='exportToVK' AND m.meta_value='true') OR (m.meta_key='exportToAlbum' AND m.meta_value!=-1) )  AND (t.ID IS null) ORDER BY p.post_date 
 		");
 	
 		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp");
