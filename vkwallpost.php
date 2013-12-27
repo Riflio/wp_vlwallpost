@@ -58,10 +58,71 @@ class VKWallPost {
 	}
 
 	function menu_vkwallpost() {
-
+		//-- регистрируем настройки		
+		$settings=array(
+				array(
+						'sectionName'=>'eg_setting_section',
+						'descr'=>'Example settings section in reading',
+						'page'=>'general_options',
+						'fields'=>array(
+								array('name'=>'appid', 'title'=>'App ID', 'descr'=>'Descr text', 'type'=>'text')
+								,array('name'=>'appkey', 'title'=>'App Key', 'descr'=>' descr descr descr', 'type'=>'text')
+								,array('name'=>'clientid', 'title'=>'Client ID', 'descr'=>' descr descr descr', 'type'=>'text')
+								,array('name'=>'accesstoken', 'title'=>'Access token', 'descr'=>' descr descr descr', 'type'=>'text')
+						)
+				)
+		);
+		
+		foreach ($settings as $section) {
+			add_settings_section($section['sectionName'], __($section['descr']), array(&$this, 'setting_section_callback'), $section['page']);
+			foreach($section['fields'] as $field) {
+				add_settings_field($field['name'], __($field['title']), array(&$this, 'setting_field_callback'), $section['page'], $section['sectionName'], $field);
+				register_setting($section['page'], $field['name']);
+			}
+		}
+		
+		
+		$optSection=isset($_GET['tab'])? $_GET['tab'] : 'general_options';
+		$tabs=array(
+				array("general_options", 'General options'),
+				array("other_options", 'Other options')
+		);
+		$tabs=apply_filters("vkwallpost_settings_tabs", $tabs);
+		echo '
+		<div class="wrap">
+		<div id="icon-themes" class="icon32"></div>
+		<h2>'.__('VKWallPost options').'</h2>
+		<h2 class="nav-tab-wrapper">
+		';
+		settings_errors();
+		foreach ($tabs as $tab) {
+			$isTabActive=($tab[0]==$optSection)? 'nav-tab-active' : '';
+			echo "<a href='?page=VKWallPost&tab={$tab[0]}' class='nav-tab {$isTabActive}'> {$tab[1]} </a> ";
+		}
+		echo '
+		</h2>
+		<form method="POST" action="options.php">
+		';
+		
+			settings_fields($optSection);
+			do_settings_sections($optSection);
+			submit_button();
+		
+		echo'
+		</form>
+		</div>
+		';
 
 	}
 
+	function setting_section_callback() {
+		//
+	}
+	
+	function setting_field_callback($field) {
+		echo "<input name='{$field['name']}' id='edit_{$field['name']}' size='100' type='{$field['type']}' value='".htmlspecialchars(get_option($field['name']))."' class='' /> {$field['descr']}";
+	}
+	
 	function menu_export() {
 		global $wpdb;
 		
@@ -210,7 +271,7 @@ class VKWallPost {
 				//-- публикуем пост
 				$postVK=Vkapi::invoke('wall.post', array(
 						'owner_id' => '-23914086',
-						'message' => $post->post_title.$post->post_content,
+						'message' => strip_tags($post->post_content),
 						'from_group' => 1,
 						'attachments'=>implode(",", $attachments)
 				));
@@ -238,7 +299,7 @@ class VKWallPost {
 						"aid"=>$post->exportToAlbum,
 						"gid"=>"23914086",
 						"caption"=>$post->post_title,
-						"description"=>$post->post_content
+						"description"=>strip_tags($post->post_content)
 				));
 				if (!$saveFileData) die("Problem with photos.save");
 
@@ -275,14 +336,17 @@ class VKWallPost {
 		if (!$exportToVK) $exportToVK=false;
 		if (!$exportToAlbum) $exportToAlbum=-1;		
 		
+		$albums=array();
 		$albums=$this->getAllAlbums();		
 
+		$albums[]=(object)array("aid"=>-1, "title"=> __("Without album") );
+		$albums[]=(object)array("aid"=>-2, "title"=> __("Create new album") );
+		
 		$opt_albums='';
 		foreach ($albums as $album) {
 			$opt_albums.='<option value='.$album->aid.' '.(($album->aid==$exportToAlbum)? "selected": "" ).' >'.$album->title.'</option>';
 		}
-		$opt_albums.='<option value="-1">'.__("Without album").'</option>';
-		$opt_albums.='<option value="-2">'.__("Create new album").'</option>';
+
 
 		echo '
 			<tr class="form-field">
