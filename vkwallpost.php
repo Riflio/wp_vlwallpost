@@ -294,7 +294,7 @@ class VKWallPost {
 
 				$saveFileData=Vkapi::invoke("photos.save", array(
 						"server"=>$upFileData->server,
-						"photos_list"=>$upFileData->photos_list, //TODO: Доки говорят, что внутри может быть другой json
+						"photos_list"=>$upFileData->photos_list, //-- Доки говорят, что внутри может быть другой json
 						"hash"=>$upFileData->hash,
 						"aid"=>$post->exportToAlbum,
 						"gid"=>"23914086",
