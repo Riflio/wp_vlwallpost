@@ -201,7 +201,7 @@ class VKWallPost {
 		return $res;
 		
 	}
-
+	
 	function ajax_exportaction() {
 		global $wpdb;
 		$_export=urldecode($_GET['export']);
@@ -235,7 +235,7 @@ class VKWallPost {
 						$imagesID[]=get_post_thumbnail_id($post->ID);
 					}
 					
-					if ( $hasGallery) {  //TODO: Проверить, есть ли внутри галерея
+					if ( $hasGallery) { 
 						$gallery = get_post_gallery($post->ID, false );
 						$ids=explode(",", $gallery['ids']);
 						$imagesID+=$ids;
@@ -271,7 +271,7 @@ class VKWallPost {
 				//-- публикуем пост
 				$postVK=Vkapi::invoke('wall.post', array(
 						'owner_id' => '-23914086',
-						'message' => strip_tags($post->post_content),
+						'message' => strip_tags(nl2br(html_entity_decode(strip_shortcodes($post->post_content)))),
 						'from_group' => 1,
 						'attachments'=>implode(",", $attachments)
 				));
