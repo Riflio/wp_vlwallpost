@@ -138,6 +138,8 @@ class VKWallPost {
 		
 		$listTable=new VKWP__List_Table($this);
 		$listTable->prepare_items($this->listPosts());
+		$enableItemsCount = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}vktemp WHERE enable=1" );
+		
 		echo '
 		<div id="vkwp" class="wrap">
 		'.screen_icon("options-general").'
@@ -150,7 +152,7 @@ class VKWallPost {
 		<a id="startexport" class="button" href="javascript:;">'.__('Start export').'</a>
 		<div class="media-item">
 		<div class="progress" style="float:left; width:100%">
-		<div class="percent">'.'0 '.__('of').' '.$listTable->total_items.'</div>
+		<div class="percent">'.'0 '.__('of').' '.$enableItemsCount.'</div>
 		<div class="bar" ></div>
 		</div>
 		</div>
@@ -161,7 +163,7 @@ class VKWallPost {
 		</div>
 		';
 		
-		$enableItemsCount = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}vktemp WHERE enable=1" );
+		
 		wp_localize_script( 'VKWallPost', 'vkmeta', array( 'total' => $enableItemsCount ));
 	}
 
