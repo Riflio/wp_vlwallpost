@@ -184,6 +184,9 @@ class VKWallPost {
 		$_albums=Vkapi::invoke("photos.getAlbums", array(
 			'owner_id'=>-23914086
 		));
+		
+		if (!$_albums) return;
+		
 		$albums=array();
 		
 		$albums[-1]=(object)array("title"=>__("Without album"));
@@ -315,7 +318,7 @@ class VKWallPost {
 		echo json_encode($export);
 		die();
 	}
-
+ 
 	function publish_post($id, $attach=-1) {
 		$post=get_post($id);
 
