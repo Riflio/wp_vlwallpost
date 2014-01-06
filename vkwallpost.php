@@ -404,7 +404,7 @@ class VKWallPost {
 
 
 	function showAdminMessages() {
-		
+		echo '<div class="vkerror"> ERROR <form > <input type="submit" name="captcha_need" value="Send" /> </form> </div>';
 	}
 
 }
