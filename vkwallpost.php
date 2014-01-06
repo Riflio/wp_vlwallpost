@@ -50,7 +50,7 @@ class VKWallPost extends VKapi {
 			
 	}
 
-	function init() {
+	public function init() {
 		global $wpdb;
 		wp_localize_script( 'VKWallPost', 'VKWallPost', array());
 
@@ -64,12 +64,12 @@ class VKWallPost extends VKapi {
 
 
 
-	function admin_menu() {
+	public function admin_menu() {
 		$this->pagehook=add_menu_page( "VKWallPost", __('VKWallPost', TEXTDOMAIN), 5, 'VKWallPost',  array(&$this, 'menu_vkwallpost'));
 		add_submenu_page("VKWallPost", __('Export', TEXTDOMAIN), __('Export', TEXTDOMAIN), 5, 'Export', array(&$this, 'menu_export'));
 	}
 	
-	private function admin_init() {
+	public function admin_init() {
 		//-- регистрируем настройки
 		$settings=array(
 				array(
