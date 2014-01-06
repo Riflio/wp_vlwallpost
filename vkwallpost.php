@@ -12,18 +12,26 @@ Author URI: http://pavelk.ru
 require_once('vkapi.php');
 require_once('listtablegroups.php');
 
-class VKWallPost {
+class VKWallPost extends VKapi {
 
 	function __construct(){
 		if (!is_admin()) return;
-		//-- подгрузим язык --//
+		
+		//-- Подгрузим язык
 		define('TEXTDOMAIN', 'default');
 		load_plugin_textdomain(TEXTDOMAIN, PLUGINDIR.'/'.dirname(plugin_basename(__FILE__)).'/langs');
 			
 		include 'setup.php';
 		$setup=new SetupVKWP(__FILE__);
 
-
+		//-- Инициализируем класс VKapi
+		parent::__construct();
+		$this->_app_id=3563905;
+		$this->_key='jGdC0q69Ba47Tw8PoCG5';
+		$this->_client_id = 71074831;
+		$this->_access_token='551d66fd4df06054ebb6ba23bc8b6963d35f39bbfc28c38ce5ce58170bdef17a9e7e1843a5de241721092';
+		
+		//-- Добавляем обработчики событий
 		add_action('init', array($this, 'init'));
 		add_action('admin_menu', array(&$this, 'admin_menu'));
 		add_action('wp_ajax_exportaction', array(&$this, 'ajax_exportaction'));
@@ -184,7 +192,7 @@ class VKWallPost {
 		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp ORDER BY tid DESC");
 		
 		//-- получим все альбомы и создадим массив по их айдишникам
-		$_albums=Vkapi::invoke("photos.getAlbums", array(
+		$_albums=$this->invoke("photos.getAlbums", array(
 			'owner_id'=>-23914086
 		));
 		
@@ -228,8 +236,7 @@ class VKWallPost {
 				$attachments=array();
 				//-- прогрузим картинки для сообщения стены
 				if ( $hasPostThumb || $hasGallery ) { 
-					$vkUPServer=Vkapi::invoke("photos.getWallUploadServer", array(
-							//"aid"=>$post->exportToAlbum,
+					$vkUPServer=$this->invoke("photos.getWallUploadServer", array(
 							"gid"=>"23914086",
 							"save_big"=>1
 					)); //TODO: А надо ли каждый раз? О_о
@@ -250,14 +257,14 @@ class VKWallPost {
 					foreach ($imagesID as $imageID) {
 						$imagePath=get_attached_file($imageID);
 					
-						$upFileData=Vkapi::uploadFile($vkUPServer->upload_url, array('photo'=>"@{$imagePath}"));
+						$upFileData=$this->uploadFile($vkUPServer->upload_url, array('photo'=>"@{$imagePath}"));
 						if (!$upFileData) {
 							var_dump($imagesID);
 							var_dump($gallery);
 							die("Problem with upload file 1");
 						}
 	
-						$saveFileData=Vkapi::invoke("photos.saveWallPhoto", array(
+						$saveFileData=$this->invoke("photos.saveWallPhoto", array(
 								"server"=>$upFileData->server,
 								"photo"=>$upFileData->photo, //TODO: Доки говорят, что внутри может быть другой json
 								"hash"=>$upFileData->hash,
@@ -275,7 +282,7 @@ class VKWallPost {
 				$attachments[]=get_term_link( (int)$post->vk_id, $taxonomy_names[0]);
 				
 				//-- публикуем пост
-				$postVK=Vkapi::invoke('wall.post', array(
+				$postVK=$this->invoke('wall.post', array(
 						'owner_id' => '-23914086',
 						'message' => strip_tags(nl2br(html_entity_decode(strip_shortcodes($post->post_content)))),
 						'from_group' => 1,
@@ -287,7 +294,7 @@ class VKWallPost {
 			
 			//-- прогрузим фотку в альбом
 			if ( ($post->exportToAlbum>0) && ($hasPostThumb) ) {
-				$vkUPServer=Vkapi::invoke("photos.getUploadServer", array(
+				$vkUPServer=$this->invoke("photos.getUploadServer", array(
 						"aid"=>$post->exportToAlbum,
 						"gid"=>"23914086",
 						"save_big"=>1
@@ -295,10 +302,10 @@ class VKWallPost {
 				if (!$vkUPServer) die("Problem with get upload album server");
 
 				$thumbPath=get_attached_file(get_post_thumbnail_id($post->ID));
-				$upFileData=Vkapi::uploadFile($vkUPServer->upload_url, array('file1'=>"@{$thumbPath}"));
+				$upFileData=$this->uploadFile($vkUPServer->upload_url, array('file1'=>"@{$thumbPath}"));
 				if (!$upFileData) die("Problem with upload file 2");
 
-				$saveFileData=Vkapi::invoke("photos.save", array(
+				$saveFileData=$this->invoke("photos.save", array(
 						"server"=>$upFileData->server,
 						"photos_list"=>$upFileData->photos_list, //-- Доки говорят, что внутри может быть другой json
 						"hash"=>$upFileData->hash,
@@ -328,7 +335,7 @@ class VKWallPost {
 	}
 
 	function getAllAlbums() {
-		$albums=Vkapi::invoke('photos.getAlbums', array(
+		$albums=$this->invoke('photos.getAlbums', array(
 				'oid' => '-23914086'
 		));
 
@@ -380,7 +387,7 @@ class VKWallPost {
 
 		if (!$term_id) return;
 
-		Vkapi::refresh();		
+		$this->refresh();		
 		
 		$exportToVK=(isset($_POST['cb_exporttovk']))? $_POST['cb_exporttovk'] : false;
 		update_metadata('vk', $term_id, 'exportToVK', $exportToVK);		
@@ -388,7 +395,7 @@ class VKWallPost {
 		$exportToAlbum=(isset($_POST['lb_exporttoalbum']))? $_POST['lb_exporttoalbum'] : -1;
 		
 		if ($exportToAlbum==-2) { //-- создадим новый альбом
-			$vkNewAlbum=Vkapi::invoke("photos.createAlbum", array(
+			$vkNewAlbum=$this->invoke("photos.createAlbum", array(
 					'title'=>$_POST['name'],
 					'group_id'=>'23914086',
 					'description'=>$_POST['description'],

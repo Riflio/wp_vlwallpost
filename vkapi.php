@@ -1,31 +1,31 @@
 <?php
 
-class Vkapi {
-	protected static $_app_id=3563905;
-	protected static $_key='jGdC0q69Ba47Tw8PoCG5';
+class VKapi {
+	static $_app_id=3563905;
+	static $_key='jGdC0q69Ba47Tw8PoCG5';
 	
-	protected static $_client_id = 71074831;
-	protected static $_access_token = '551d66fd4df06054ebb6ba23bc8b6963d35f39bbfc28c38ce5ce58170bdef17a9e7e1843a5de241721092';
+	static $_client_id = 71074831;
+	static $_access_token = '551d66fd4df06054ebb6ba23bc8b6963d35f39bbfc28c38ce5ce58170bdef17a9e7e1843a5de241721092';
 
-	public static function invoke ($name, array $params = array())	{
-		$params['access_token'] = self::$_access_token;	
+	public function invoke ($name, array $params = array())	{
+		$params['access_token'] = $this->_access_token;	
 		
-		if (isset($_GET['captcha_sid'])) {
-			$params['captcha_sid']=$_GET['captcha_sid'];
-			$params['captcha_key']=$_GET['captcha_key'];
-			unset($_GET['captcha_sid']);
+		if (isset($_REQUEST['captcha_sid'])) {
+			$params['captcha_sid']=$_REQUEST['captcha_sid'];
+			$params['captcha_key']=$_REQUEST['captcha_key'];
+			unset($_REQUEST['captcha_sid']);
 		}	
 		
 		$content = file_get_contents('https://api.vk.com/method/'.$name.'?'.http_build_query($params));
 		$result  = json_decode($content);
 		
-		return Vkapi::isError($result);
+		return $this->isError($result);
 	}
  
-	public static function auth (array $scopes)	{
+	public function auth (array $scopes)	{
 		header('Content-type: text/html; charset=windows-1251'); 
 		echo file_get_contents('http://oauth.vk.com/authorize?'.http_build_query(array(
-			'client_id'     => self::$_app_id,
+			'client_id'     => $this->_app_id,
 			'scope'         => implode(',', $scopes),
 			'redirect_uri'  => 'http://api.vk.com/blank.html',
 			'display'       => 'page',
@@ -33,7 +33,7 @@ class Vkapi {
 		)));
 	}
 
-	public static function isError($res) {
+	public function isError($res) {
 		if ($res->error)  {		
 			echo '<div class="vkerror">';	
 			switch ($res->error->error_code) {
@@ -58,14 +58,14 @@ class Vkapi {
 		
 	}
 	
-	public static function refresh() {
+	public function refresh() {
 		if (isset($_POST['captcha_sid'])) {					
 			wp_redirect( 'http://'.$_SERVER['HTTP_HOST'].$_POST['_wp_http_referer'].'&captcha_sid='.$_POST['captcha_sid'].'&captcha_key='.$_POST['captcha_key']);
 			exit;
 		}
 	}
 	
-	public static function uploadFile($uploadUrl, $files) {
+	public function uploadFile($uploadUrl, $files) {
 		//$files['photo'] = '@'.'path to photo'; 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $uploadUrl);
