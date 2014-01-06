@@ -38,7 +38,7 @@ function exportAction(exp) {
 				
 				
 				
-				setTimeout(exportAction, 6000, data);
+				setTimeout(exportAction, 1000, data);
 
 			}
 	});		
