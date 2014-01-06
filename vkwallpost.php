@@ -26,10 +26,10 @@ class VKWallPost extends VKapi {
 
 		//-- Инициализируем класс VKapi и необходимые переменные
 		parent::__construct();
-		$this->_app_id=3563905;
-		$this->_key='jGdC0q69Ba47Tw8PoCG5';
-		$this->_client_id = 71074831;
-		$this->_access_token='551d66fd4df06054ebb6ba23bc8b6963d35f39bbfc28c38ce5ce58170bdef17a9e7e1843a5de241721092';
+		$this->_app_id = get_option('vkapi_appid'); //3563905
+		$this->_key = get_option('vkapi_appkey'); //jGdC0q69Ba47Tw8PoCG5
+		$this->_client_id = get_option('vkapi_clientid'); //71074831
+		$this->_access_token = get_option('vkapi_accesstoken'); //551d66fd4df06054ebb6ba23bc8b6963d35f39bbfc28c38ce5ce58170bdef17a9e7e1843a5de241721092
 		$this->_group_id=23914086;
 		
 		//-- Добавляем обработчики событий
@@ -77,10 +77,10 @@ class VKWallPost extends VKapi {
 						'descr'=>'Example settings section in reading',
 						'page'=>'general_options',
 						'fields'=>array(
-								array('name'=>'appid', 'title'=>'App ID', 'descr'=>'Descr text', 'type'=>'text')
-								,array('name'=>'appkey', 'title'=>'App Key', 'descr'=>' descr descr descr', 'type'=>'text')
-								,array('name'=>'clientid', 'title'=>'Client ID', 'descr'=>' descr descr descr', 'type'=>'text')
-								,array('name'=>'accesstoken', 'title'=>'Access token', 'descr'=>' descr descr descr', 'type'=>'text')
+								array('name'=>'vkapi_appid', 'title'=>'App ID', 'descr'=>'Descr text', 'type'=>'text')
+								,array('name'=>'vkapi_appkey', 'title'=>'App Key', 'descr'=>' descr descr descr', 'type'=>'text')
+								,array('name'=>'vkapi_clientid', 'title'=>'Client ID', 'descr'=>' descr descr descr', 'type'=>'text')
+								,array('name'=>'vkapi_accesstoken', 'title'=>'Access token', 'descr'=>' descr descr descr', 'type'=>'text')
 						)
 				)
 		);
