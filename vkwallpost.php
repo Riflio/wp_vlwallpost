@@ -396,11 +396,8 @@ class VKWallPost {
 					'privacy'=>'0'
 			));		
 			
-			var_dump($vkNewAlbum); 
-			die();
-			
 			if ($vkNewAlbum!==false) {
-				$exportToAlbum=$vkNewAlbum->id;
+				$exportToAlbum=$vkNewAlbum->aid;
 			} else $exportToAlbum=-1;
 		}
 		
