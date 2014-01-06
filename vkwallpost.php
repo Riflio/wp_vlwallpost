@@ -56,6 +56,7 @@ class VKWallPost extends VKapi {
 		
 
 		$wpdb->vkmeta = "{$wpdb->prefix}vkmeta";
+		$wpdb->vktemp = "{$wpdb->prefix}vktemp";
 	}
 
 
@@ -140,13 +141,13 @@ class VKWallPost extends VKapi {
 		if (isset($_POST['updateenableitems'])) {
 			$items=$_POST['cb_export'];
 			foreach ($items as $id => $item) {
-				$wpdb->update( "{$wpdb->prefix}vktemp" , array("enable"=>($item=="true")? 1 : 0) , array("ID"=>$id), array("%d"), array("%d") ); 
-			}
+				$wpdb->update( $wpdb->vktemp , array("enable"=>($item=="true")? 1 : 0) , array("ID"=>$id), array("%d"), array("%d") ); 
+			} 
 		}
 		
 		$listTable=new VKWP__List_Table($this);
 		$listTable->prepare_items($this->listPosts());
-		$enableItemsCount = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}vktemp WHERE enable=1" );
+		$enableItemsCount = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->vktemp} WHERE enable=1" );
 		
 		echo '
 		<div id="vkwp" class="wrap">
@@ -179,17 +180,17 @@ class VKWallPost extends VKapi {
 		global $wpdb;		
 
 		$wpdb->query("
-				INSERT INTO {$wpdb->prefix}vktemp (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content, enable)
-				SELECT m.vk_id, IF(m.meta_value  = 'true' , 1 , 0) as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content, 1 FROM `wp_vkmeta` as m
-				LEFT JOIN `{$wpdb->prefix}term_relationships` as `rs` ON rs.term_taxonomy_id=m.vk_id
-				LEFT JOIN `{$wpdb->prefix}vkmeta` as m2 ON m2.vk_id=m.vk_id
-				LEFT JOIN `{$wpdb->prefix}vkmeta` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
-				RIGHT JOIN `{$wpdb->prefix}posts` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATETIME)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATETIME)
-				LEFT JOIN {$wpdb->prefix}vktemp as t ON t.ID=p.ID
+				INSERT INTO {$wpdb->vktemp} (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content, enable)
+				SELECT m.vk_id, IF(m.meta_value  = 'true' , 1 , 0) as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content, 1 FROM  `{$wpdb->vkmeta}` as m
+				LEFT JOIN `{$wpdb->term_relationships}` as `rs` ON rs.term_taxonomy_id=m.vk_id
+				LEFT JOIN `{$wpdb->vkmeta}` as m2 ON m2.vk_id=m.vk_id
+				LEFT JOIN `{$wpdb->vkmeta}` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
+				RIGHT JOIN `{$wpdb->posts}` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATETIME)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATETIME)
+				LEFT JOIN `{$wpdb->vktemp}` as t ON t.ID=p.ID
 				WHERE ((m.meta_key='exportToVK' AND m.meta_value='true') OR (m2.meta_key='exportToAlbum' and m2.meta_value>-2))  AND (t.ID IS null) ORDER BY p.post_date 
 		");
 	
-		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp ORDER BY tid DESC");
+		$items=$wpdb->get_results("SELECT * FROM {$wpdb->vktemp} ORDER BY tid DESC");
 		
 		//-- получим все альбомы и создадим массив по их айдишникам
 		$_albums=$this->invoke("photos.getAlbums", array(
@@ -221,7 +222,7 @@ class VKWallPost extends VKapi {
 		$_export=urldecode($_GET['export']);
 		$export  = json_decode($_export);
 		$limit=1; //TODO: Добавить в настройки сколько за раз
-		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp WHERE enable=1 ORDER BY tid ASC LIMIT {$limit} ;");
+		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->vktemp} WHERE enable=1 ORDER BY tid ASC LIMIT {$limit} ;");
 
 		$nowDT = new DateTime();
 		$nowDT=$nowDT->format('Y-m-d H:i:s');		
@@ -318,7 +319,7 @@ class VKWallPost extends VKapi {
 
 			}
 			
-			$wpdb->delete( "{$wpdb->prefix}vktemp", array("ID"=>$post->ID), array("%d") );
+			$wpdb->delete( $wpdb->vktemp, array("ID"=>$post->ID), array("%d") );
 			
 			update_post_meta($post->ID, 'vkPostID', $postVK->post_id);
 			update_metadata('vk', $post->ID, 'postExportDT', $nowDT);
