@@ -188,10 +188,10 @@ class VKWallPost extends VKapi {
 		global $wpdb;		
 
 		$wpdb->query("
-				SET @var='-1';
 				INSERT INTO {$wpdb->vktemp} (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content, enable)
 				SELECT p.term_taxonomy_id, IF(exp.ToVK = 'true' , 1 , 0), exp.ToAlbum, p.ID, p.post_title, p.post_content, 1
 				FROM
+				(SELECT @var:='-1') as var,
 				(SELECT m.vk_id, @var:=concat(m.vk_id,',', @var) as all_vk_id, group_concat( if (meta_key = 'exportToAlbum',  meta_value, Null)  ) AS ToAlbum, group_concat( if (meta_key = 'exportToVK',  meta_value, Null)  ) AS ToVK FROM `{$wpdb->vkmeta}` as m WHERE (m.meta_key='exportToAlbum') OR (m.meta_key='exportToVK') GROUP BY m.vk_id) as exp,
 				(SELECT * FROM wp_posts as p, `{$wpdb->term_relationships}`  AS rs WHERE FIND_IN_SET (rs.term_taxonomy_id,  CAST(@var AS CHAR) ) AND p.ID=rs.object_id) as p
 				LEFT JOIN (SELECT * FROM `{$wpdb->vkmeta}` as m WHERE m.meta_key='postExportDT' ) as m ON m.vk_id=p.ID
