@@ -7,6 +7,10 @@ class VKapi {
 	static $_client_id = 71074831;
 	static $_access_token = '551d66fd4df06054ebb6ba23bc8b6963d35f39bbfc28c38ce5ce58170bdef17a9e7e1843a5de241721092';
 
+	function __construct(){
+		
+	}
+	
 	public function invoke ($name, array $params = array())	{
 		$params['access_token'] = $this->_access_token;	
 		
