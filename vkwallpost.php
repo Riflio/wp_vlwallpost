@@ -160,7 +160,8 @@ class VKWallPost {
 		echo 	'<input type="submit" class="button" value="'.__('Update').'" /><input type="hidden" name="updateenableitems" value="1" /></form></div>
 		</div>
 		';
-
+		
+		$enableItemsCount = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}vktemp WHERE enable=1" );
 		wp_localize_script( 'VKWallPost', 'vkmeta', array( 'total' => $listTable->total_items ));
 	}
 
