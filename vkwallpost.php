@@ -162,7 +162,7 @@ class VKWallPost {
 		';
 		
 		$enableItemsCount = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}vktemp WHERE enable=1" );
-		wp_localize_script( 'VKWallPost', 'vkmeta', array( 'total' => $listTable->total_items ));
+		wp_localize_script( 'VKWallPost', 'vkmeta', array( 'total' => $enableItemsCount ));
 	}
 
 	function listPosts() {
