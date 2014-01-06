@@ -24,16 +24,19 @@ class VKWallPost extends VKapi {
 		include 'setup.php';
 		$setup=new SetupVKWP(__FILE__);
 
-		//-- Инициализируем класс VKapi
+		//-- Инициализируем класс VKapi и необходимые переменные
 		parent::__construct();
 		$this->_app_id=3563905;
 		$this->_key='jGdC0q69Ba47Tw8PoCG5';
 		$this->_client_id = 71074831;
 		$this->_access_token='551d66fd4df06054ebb6ba23bc8b6963d35f39bbfc28c38ce5ce58170bdef17a9e7e1843a5de241721092';
+		$this->_group_id=23914086;
 		
 		//-- Добавляем обработчики событий
 		add_action('init', array($this, 'init'));
 		add_action('admin_menu', array(&$this, 'admin_menu'));
+		add_action('admin_init', array(&$this, 'admin_init'));
+		
 		add_action('wp_ajax_exportaction', array(&$this, 'ajax_exportaction'));
 		add_action('publish_post', array(&$this, 'publish_post'), 1);
 
@@ -65,9 +68,9 @@ class VKWallPost extends VKapi {
 		$this->pagehook=add_menu_page( "VKWallPost", __('VKWallPost', TEXTDOMAIN), 5, 'VKWallPost',  array(&$this, 'menu_vkwallpost'));
 		add_submenu_page("VKWallPost", __('Export', TEXTDOMAIN), __('Export', TEXTDOMAIN), 5, 'Export', array(&$this, 'menu_export'));
 	}
-
-	function menu_vkwallpost() {
-		//-- регистрируем настройки		
+	
+	private function admin_init() {
+		//-- регистрируем настройки
 		$settings=array(
 				array(
 						'sectionName'=>'eg_setting_section',
@@ -89,7 +92,11 @@ class VKWallPost extends VKapi {
 				register_setting($section['page'], $field['name']);
 			}
 		}
-		
+			
+	}
+
+	function menu_vkwallpost() {
+
 		
 		$optSection=isset($_GET['tab'])? $_GET['tab'] : 'general_options';
 		$tabs=array(
@@ -194,7 +201,7 @@ class VKWallPost extends VKapi {
 		
 		//-- получим все альбомы и создадим массив по их айдишникам
 		$_albums=$this->invoke("photos.getAlbums", array(
-			'owner_id'=>-23914086
+			'owner_id'=>-$this->_group_id
 		));
 		
 		if (!$_albums) return;
@@ -238,7 +245,7 @@ class VKWallPost extends VKapi {
 				//-- прогрузим картинки для сообщения стены
 				if ( $hasPostThumb || $hasGallery ) { 
 					$vkUPServer=$this->invoke("photos.getWallUploadServer", array(
-							"gid"=>"23914086",
+							"gid"=>$this->_group_id,
 							"save_big"=>1
 					)); //TODO: А надо ли каждый раз? О_о
 					if (!$vkUPServer) die("Problem with get upload server"); //-- ошибка с vkapi.php, пусть сам разбирается.
@@ -269,7 +276,7 @@ class VKWallPost extends VKapi {
 								"server"=>$upFileData->server,
 								"photo"=>$upFileData->photo, //TODO: Доки говорят, что внутри может быть другой json
 								"hash"=>$upFileData->hash,
-								"gid"=>"23914086",
+								"gid"=>$this->_group_id,
 								"caption"=>$post->post_title
 						));
 						if (!$saveFileData) die("photos.saveWallPhoto");					
@@ -284,7 +291,7 @@ class VKWallPost extends VKapi {
 				
 				//-- публикуем пост
 				$postVK=$this->invoke('wall.post', array(
-						'owner_id' => '-23914086',
+						'owner_id' => -$this->_group_id,
 						'message' => strip_tags(nl2br(html_entity_decode(strip_shortcodes($post->post_content)))),
 						'from_group' => 1,
 						'attachments'=>implode(",", $attachments)
@@ -297,7 +304,7 @@ class VKWallPost extends VKapi {
 			if ( ($post->exportToAlbum>0) && ($hasPostThumb) ) {
 				$vkUPServer=$this->invoke("photos.getUploadServer", array(
 						"aid"=>$post->exportToAlbum,
-						"gid"=>"23914086",
+						"gid"=>$this->_group_id,
 						"save_big"=>1
 				)); //TODO: А надо ли каждый раз? О_о
 				if (!$vkUPServer) die("Problem with get upload album server");
@@ -311,7 +318,7 @@ class VKWallPost extends VKapi {
 						"photos_list"=>$upFileData->photos_list, //-- Доки говорят, что внутри может быть другой json
 						"hash"=>$upFileData->hash,
 						"aid"=>$post->exportToAlbum,
-						"gid"=>"23914086",
+						"gid"=>$this->_group_id,
 						"caption"=>$post->post_title,
 						"description"=>strip_tags($post->post_content)
 				));
@@ -337,7 +344,7 @@ class VKWallPost extends VKapi {
 
 	function getAllAlbums() {
 		$albums=$this->invoke('photos.getAlbums', array(
-				'oid' => '-23914086'
+				'oid' => -$this->_group_id
 		));
 
 		return $albums;
@@ -398,7 +405,7 @@ class VKWallPost extends VKapi {
 		if ($exportToAlbum==-2) { //-- создадим новый альбом
 			$vkNewAlbum=$this->invoke("photos.createAlbum", array(
 					'title'=>$_POST['name'],
-					'group_id'=>'23914086',
+					'group_id'=>$this->_group_id,
 					'description'=>$_POST['description'],
 					'comment_privacy'=>'0',
 					'privacy'=>'0'
