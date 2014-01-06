@@ -176,7 +176,7 @@ class VKWallPost {
 				LEFT JOIN `{$wpdb->prefix}term_relationships` as `rs` ON rs.term_taxonomy_id=m.vk_id
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m2 ON m2.meta_key='exportToAlbum' and m2.meta_value>-2 and  m2.vk_id=m.vk_id
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
-				RIGHT JOIN `{$wpdb->prefix}posts` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATE)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATE)
+				RIGHT JOIN `{$wpdb->prefix}posts` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATETIME)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATETIME)
 				LEFT JOIN {$wpdb->prefix}vktemp as t ON t.ID=p.ID
 				WHERE (m.meta_key='exportToVK' AND m.meta_value='true')  AND (t.ID IS null) ORDER BY p.post_date 
 		");
@@ -213,7 +213,7 @@ class VKWallPost {
 		$_export=urldecode($_GET['export']);
 		$export  = json_decode($_export);
 		$limit=1; //TODO: Добавить в настройки сколько за раз
-		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp WHERE enable=1 ORDER BY tid ASC LIMIT  {$export->step}, {$limit} ;");
+		$posts=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp WHERE enable=1 ORDER BY tid ASC LIMIT {$limit} ;");
 
 		$nowDT = new DateTime();
 		$nowDT=$nowDT->format('Y-m-d H:i:s');		
