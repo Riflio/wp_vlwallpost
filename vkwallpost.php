@@ -174,11 +174,11 @@ class VKWallPost {
 				INSERT INTO {$wpdb->prefix}vktemp (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content, enable)
 				SELECT m.vk_id, IF(m.meta_value  = 'true' , 1 , 0) as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content, 1 FROM `wp_vkmeta` as m
 				LEFT JOIN `{$wpdb->prefix}term_relationships` as `rs` ON rs.term_taxonomy_id=m.vk_id
-				LEFT JOIN `{$wpdb->prefix}vkmeta` as m2 ON m2.meta_key='exportToAlbum' and m2.meta_value>-2 and  m2.vk_id=m.vk_id
+				LEFT JOIN `{$wpdb->prefix}vkmeta` as m2 ON m2.vk_id=m.vk_id
 				LEFT JOIN `{$wpdb->prefix}vkmeta` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
 				RIGHT JOIN `{$wpdb->prefix}posts` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATETIME)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATETIME)
 				LEFT JOIN {$wpdb->prefix}vktemp as t ON t.ID=p.ID
-				WHERE (m.meta_key='exportToVK' AND m.meta_value='true')  AND (t.ID IS null) ORDER BY p.post_date 
+				WHERE ((m.meta_key='exportToVK' AND m.meta_value='true') OR (m2.meta_key='exportToAlbum' and m2.meta_value>-2))  AND (t.ID IS null) ORDER BY p.post_date 
 		");
 	
 		$items=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}vktemp ORDER BY tid DESC");
