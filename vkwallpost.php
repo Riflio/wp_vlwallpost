@@ -188,16 +188,17 @@ class VKWallPost extends VKapi {
 		global $wpdb;		
 
 		$wpdb->query("
+				SET @var='-1';
 				INSERT INTO {$wpdb->vktemp} (vk_id, exportToVK, exportToAlbum, ID, post_title, post_content, enable)
-				SELECT m.vk_id, IF(m.meta_value  = 'true' , 1 , 0) as exportToVK, m2.meta_value as exportToAlbum, p.ID, p.post_title, p.post_content, 1 FROM  `{$wpdb->vkmeta}` as m
-				LEFT JOIN `{$wpdb->term_relationships}` as `rs` ON rs.term_taxonomy_id=m.vk_id
-				LEFT JOIN `{$wpdb->vkmeta}` as m2 ON m2.vk_id=m.vk_id
-				LEFT JOIN `{$wpdb->vkmeta}` as m3 ON m3.meta_key='postExportDT' and  m3.vk_id=rs.object_id
-				RIGHT JOIN `{$wpdb->posts}` as p ON p.ID=rs.object_id and CAST(p.post_modified as DATETIME)>=CAST(IFNULL(m3.meta_value, '0000-00-00')  AS DATETIME)
+				SELECT p.term_taxonomy_id, IF(exp.ToVK = 'true' , 1 , 0), exp.ToAlbum, p.ID, p.post_title, p.post_content, 1
+				FROM
+				(SELECT m.vk_id, @var:=concat(m.vk_id,',', @var) as all_vk_id, group_concat( if (meta_key = 'exportToAlbum',  meta_value, Null)  ) AS ToAlbum, group_concat( if (meta_key = 'exportToVK',  meta_value, Null)  ) AS ToVK FROM `{$wpdb->vkmeta}` as m WHERE (m.meta_key='exportToAlbum') OR (m.meta_key='exportToVK') GROUP BY m.vk_id) as exp,
+				(SELECT * FROM wp_posts as p, `{$wpdb->term_relationships}`  AS rs WHERE FIND_IN_SET (rs.term_taxonomy_id,  CAST(@var AS CHAR) ) AND p.ID=rs.object_id) as p
+				LEFT JOIN (SELECT * FROM `{$wpdb->vkmeta}` as m WHERE m.meta_key='postExportDT' ) as m ON m.vk_id=p.ID
 				LEFT JOIN `{$wpdb->vktemp}` as t ON t.ID=p.ID
-				WHERE ((m.meta_key='exportToVK' AND m.meta_value='true') OR (m2.meta_key='exportToAlbum' and m2.meta_value>-2))  AND (t.ID IS null) ORDER BY p.post_date 
-		");
-	
+				WHERE  CAST(p.post_modified as DATETIME)>=CAST(IFNULL(m.meta_value, '0000-00-00')  AS DATETIME)  AND (exp.vk_id=p.term_taxonomy_id) AND (t.ID IS null)  ORDER BY p.post_date
+		");  //--Гыыыы. Сам в шоке. Сначала было проще.
+		
 		$items=$wpdb->get_results("SELECT * FROM {$wpdb->vktemp} ORDER BY tid DESC");
 		
 		//-- получим все альбомы и создадим массив по их айдишникам
